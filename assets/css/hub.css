@@ -1,0 +1,272 @@
+/* ============================================================
+   hub.css — Estilos globais do Hub PJ
+   Variáveis, reset, tipografia, navegação, layout e responsivo
+   ============================================================ */
+
+/* ---------- Variáveis: Tema claro (padrão) ---------- */
+:root {
+  --bg: #f7fbf8;
+  --bg-secondary: #ffffff;
+  --text: #173d34;
+  --muted: #6f8780;
+  --green-start: #13ab25;
+  --green-end: #003d32;
+  --shadow: 0 24px 60px rgba(0, 61, 50, .12);
+  --shadow-hover: 0 28px 70px rgba(0, 61, 50, .18);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --max-width: 1180px;
+  --surface: linear-gradient(135deg, rgba(255,255,255,.82), rgba(255,255,255,.58)),
+             linear-gradient(135deg, rgba(19,171,37,.08), rgba(0,61,50,.08));
+  --surface-card: linear-gradient(135deg, rgba(244,252,247,.92), rgba(227,244,233,.82)),
+                  radial-gradient(circle at right bottom, rgba(19,171,37,.14), transparent 24%),
+                  radial-gradient(circle at 82% 50%, rgba(0,61,50,.08), transparent 22%);
+  --card-border: rgba(255,255,255,.75);
+  --card-border-soft: rgba(255,255,255,.8);
+  --search-bg: transparent;
+  --nav-surface: rgba(255,255,255,.82);
+  --submenu-surface: rgba(255,255,255,.96);
+
+  /* Status: amber (usado no Fiscal e outros) */
+  --amber: #d98208;
+  --amber-bg: #fff4dc;
+  --amber-border: #f2cf7a;
+}
+
+/* ---------- Variáveis: Tema escuro ---------- */
+body.dark {
+  --bg: #08110d;
+  --bg-secondary: #0d1b15;
+  --text: #eef8f1;
+  --muted: #a7beb4;
+  --green-start: #1ed760;
+  --green-end: #0b2e24;
+  --shadow: 0 24px 60px rgba(0, 0, 0, .34);
+  --shadow-hover: 0 28px 70px rgba(0, 0, 0, .42);
+  --surface: linear-gradient(135deg, rgba(16,28,23,.88), rgba(18,33,27,.76)),
+             linear-gradient(135deg, rgba(30,215,96,.08), rgba(11,46,36,.16));
+  --surface-card: linear-gradient(135deg, rgba(17,31,25,.92), rgba(13,26,21,.86)),
+                  radial-gradient(circle at right bottom, rgba(30,215,96,.12), transparent 24%),
+                  radial-gradient(circle at 82% 50%, rgba(11,46,36,.24), transparent 22%);
+  --card-border: rgba(255,255,255,.08);
+  --card-border-soft: rgba(255,255,255,.08);
+  --search-bg: transparent;
+  --nav-surface: rgba(16,28,23,.88);
+  --submenu-surface: rgba(14,24,20,.98);
+
+  --amber: #ffb347;
+  --amber-bg: rgba(255,179,71,.12);
+  --amber-border: rgba(255,179,71,.24);
+}
+
+/* ---------- Reset ---------- */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Manrope", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(19,171,37,.10), transparent 32%),
+    radial-gradient(circle at 85% 12%, rgba(0,61,50,.10), transparent 24%),
+    linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg) 100%);
+  transition: background .25s ease, color .25s ease;
+}
+
+a, button, input { font: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* ---------- Layout ---------- */
+.page { padding: 24px 20px 48px; }
+
+.wrap,
+.top-nav {
+  width: min(100%, var(--max-width));
+  margin: 0 auto;
+}
+
+/* ---------- Navegacao ---------- */
+.top-nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+  position: sticky;
+  top: 16px;
+  z-index: 30;
+}
+
+.nav-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: var(--nav-surface);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.nav-logo {
+  width: 150px;
+  height: 48px;
+  border-radius: 14px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.nav-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.nav-link,
+.theme-toggle,
+.nav-dropdown-toggle {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .18s ease, transform .18s ease, color .18s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover,
+.theme-toggle:hover,
+.nav-dropdown-toggle:hover {
+  background: rgba(19,171,37,.10);
+  transform: translateY(-1px);
+  color: var(--green-end);
+}
+
+body.dark .nav-link:hover,
+body.dark .theme-toggle:hover,
+body.dark .nav-dropdown-toggle:hover {
+  color: #b9f5c7;
+  background: rgba(30,215,96,.10);
+}
+
+/* Dropdown */
+.nav-dropdown { position: relative; }
+
+.nav-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-dropdown-toggle .caret {
+  font-size: 11px;
+  transition: transform .18s ease;
+}
+
+.nav-dropdown.open .nav-dropdown-toggle .caret {
+  transform: rotate(180deg);
+}
+
+.nav-submenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 260px;
+  padding: 10px;
+  border-radius: 18px;
+  background: var(--submenu-surface);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-hover);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-dropdown.open .nav-submenu {
+  display: flex;
+}
+
+.nav-submenu a {
+  display: block;
+  padding: 11px 12px;
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  transition: background .18s ease, color .18s ease;
+}
+
+.nav-submenu a:hover {
+  background: rgba(19,171,37,.10);
+  color: var(--green-end);
+}
+
+body.dark .nav-submenu a:hover {
+  background: rgba(30,215,96,.10);
+  color: #b9f5c7;
+}
+
+/* ---------- Glass panel ---------- */
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: var(--radius-xl);
+}
+
+/* ---------- Tipografia ---------- */
+h1, h2, h3 { color: var(--text); }
+
+h1 {
+  margin: 16px 0 14px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.05;
+}
+
+/* ---------- Texto muted ---------- */
+.hero p,
+.section-intro p,
+.sector-content p,
+.tool p,
+.meta-card span {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: .95rem;
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 940px) {
+  .top-nav { top: 10px; }
+
+  .nav-pill {
+    justify-content: center;
+    border-radius: 24px;
+  }
+
+  .nav-submenu {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

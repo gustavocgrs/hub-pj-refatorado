@@ -1,0 +1,12 @@
+api/config.php
+db/install.php
+*.log
+.DS_Store
+Thumbs.db
+
+# Segredos (senha em texto puro / URL secreta do webhook)
+db/criar-usuarios.php
+api/webhook-proxy.php
+
+# Runtime
+tmp/ratelimit/*

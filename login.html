@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Hub PJ</title>
+  <link rel="icon" type="image/png" href="https://pjcontrato.com.br/wp-content/uploads/2026/01/cropped-PJ-Logo-Verde.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/hub.css" />
+  <style>
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: min(100%, 420px);
+      padding: 36px 32px;
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: var(--radius-xl);
+    }
+
+    .login-logo {
+      display: block;
+      width: 180px;
+      margin: 0 auto 24px;
+    }
+
+    .login-card h1 {
+      font-size: 1.5rem;
+      text-align: center;
+      margin: 0 0 6px;
+    }
+
+    .login-card p {
+      text-align: center;
+      color: var(--muted);
+      font-size: .92rem;
+      margin: 0 0 28px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--muted);
+    }
+
+    .field input {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(19,171,37,.14);
+      background: rgba(255,255,255,.86);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    body.dark .field input {
+      background: rgba(255,255,255,.05);
+      border-color: rgba(255,255,255,.08);
+    }
+
+    .field input:focus {
+      border-color: var(--green-start);
+      box-shadow: 0 0 0 4px rgba(19,171,37,.10);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--green-start), var(--green-end));
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(0,61,50,.18);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(0,61,50,.24);
+    }
+
+    .login-btn:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .login-error {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(192,57,43,.08);
+      border: 1px solid rgba(192,57,43,.16);
+      color: #c0392b;
+      font-size: .88rem;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+
+    body.dark .login-error {
+      background: rgba(255,143,134,.08);
+      border-color: rgba(255,143,134,.16);
+      color: #ff8f86;
+    }
+
+    .theme-toggle-float {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      border: none;
+      background: var(--nav-surface);
+      backdrop-filter: blur(18px);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="theme-toggle-float" id="theme-toggle">Tema escuro</button>
+
+  <div class="login-card">
+    <img class="login-logo" src="https://pjcontrato.com.br/wp-content/uploads/2025/12/Logos-Escritas.png" alt="Logo PJ" />
+    <h1>Entrar no Hub</h1>
+    <p>Acesse com suas credenciais para visualizar os setores.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" required autofocus />
+      </div>
+
+      <div class="field">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" placeholder="Sua senha" required />
+      </div>
+
+      <button type="submit" class="login-btn" id="loginBtn">Entrar</button>
+
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+
+  <script>
+    /* Theme toggle */
+    var themeToggle = document.getElementById("theme-toggle");
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      themeToggle.textContent = "Tema claro";
+    }
+    themeToggle.addEventListener("click", function () {
+      document.body.classList.toggle("dark");
+      var isDark = document.body.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      themeToggle.textContent = isDark ? "Tema claro" : "Tema escuro";
+    });
+
+    /* Se ja esta logado, vai direto para home */
+    fetch("api/auth/check-session.php")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.logado) window.location.href = "index.html";
+      })
+      .catch(function () {});
+
+    /* Login */
+    var form = document.getElementById("loginForm");
+    var btn = document.getElementById("loginBtn");
+    var errEl = document.getElementById("loginError");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      errEl.style.display = "none";
+      btn.disabled = true;
+      btn.textContent = "Entrando...";
+
+      fetch("api/auth/login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: document.getElementById("email").value.trim(),
+          senha: document.getElementById("senha").value
+        })
+      })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+      .then(function (res) {
+        if (res.ok) {
+          /* Armazena CSRF token para uso nas proximas requisicoes */
+          if (res.data.csrf_token) {
+            sessionStorage.setItem("csrf_token", res.data.csrf_token);
+          }
+          window.location.href = "index.html";
+        } else {
+          errEl.textContent = res.data.erro || "Erro ao fazer login.";
+          errEl.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Entrar";
+        }
+      })
+      .catch(function () {
+        errEl.textContent = "Erro de conexao. Tente novamente.";
+        errEl.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Entrar";
+      });
+    });
+  </script>
+</body>
+</html>

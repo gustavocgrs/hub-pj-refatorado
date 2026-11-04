@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-base="../../..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora CLT | Hub PJ</title>
+  <link rel="icon" type="image/png" href="https://pjcontrato.com.br/wp-content/uploads/2026/01/cropped-PJ-Logo-Verde.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../../assets/css/hub.css" />
+  <link rel="stylesheet" href="../../../assets/css/components.css" />
+  <style>
+    :root {
+      --bg:#f7fbf8;--bg-secondary:#ffffff;
+      --surface:rgba(255,255,255,.78);--surface-strong:rgba(255,255,255,.9);--surface-soft:rgba(255,255,255,.68);
+      --text:#173d34;--muted:#6f8780;
+      --green:#13ab25;--green-dark:#003d32;--green-soft:#e8f7ec;--green-mid:#b7e7c3;
+      --border:rgba(19,171,37,.15);--border-strong:rgba(19,171,37,.26);
+      --shadow:0 24px 60px rgba(0,61,50,.1);--shadow-hover:0 28px 72px rgba(0,61,50,.16);
+      --amber:#d98208;--red:#c0392b;--blue:#1a6cb5;--purple:#7b3fa0;
+      --radius-xl:28px;--radius-lg:22px;--radius-md:18px;--radius-sm:14px;
+      --max-width:1240px;
+      --nav-surface:rgba(255,255,255,.82);--submenu-surface:rgba(255,255,255,.96);
+    }
+    body.dark {
+      --bg:#08110d;--bg-secondary:#0d1b15;
+      --surface:rgba(16,28,23,.88);--surface-strong:rgba(18,33,27,.94);--surface-soft:rgba(18,33,27,.78);
+      --text:#eef8f1;--muted:#a7beb4;
+      --green:#1ed760;--green-dark:#dff7e8;--green-soft:rgba(30,215,96,.1);--green-mid:rgba(30,215,96,.22);
+      --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.14);
+      --shadow:0 24px 60px rgba(0,0,0,.34);--shadow-hover:0 28px 72px rgba(0,0,0,.42);
+      --amber:#ffb347;--red:#ff8f86;--blue:#7dc6ff;--purple:#d39cff;
+      --nav-surface:rgba(16,28,23,.88);--submenu-surface:rgba(14,24,20,.98);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      min-height:100vh;
+      font-family:"Manrope","Segoe UI",Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left,rgba(19,171,37,.08),transparent 32%),
+        radial-gradient(circle at 85% 12%,rgba(0,61,50,.08),transparent 24%),
+        linear-gradient(180deg,var(--bg-secondary) 0%,var(--bg) 100%);
+      color:var(--text);
+      transition:background .25s ease,color .25s ease;
+    }
+    a,button,input,select{font:inherit;}
+    a{color:inherit;text-decoration:none;}
+    .page{opacity:0;transition:opacity .3s ease;}
+    .page.ready{opacity:1;}
+
+    /* Layout */
+    .wrap{max-width:var(--max-width);margin:0 auto;padding:28px 24px 72px;}
+    .top{margin-bottom:6px;}
+    .back{
+      display:inline-flex;padding:12px 18px;border-radius:16px;
+      background:var(--nav-surface);border:1px solid rgba(19,171,37,.14);
+      box-shadow:var(--shadow);font-weight:700;font-size:.85rem;color:var(--text);
+      transition:color .15s,box-shadow .15s;
+    }
+    .back:hover{color:var(--green);box-shadow:var(--shadow-hover);}
+
+    /* Hero */
+    .hero{
+      padding:28px 36px;border-radius:var(--radius-xl);
+      background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.56)),
+                 linear-gradient(135deg,rgba(19,171,37,.08),rgba(0,61,50,.08));
+      border:1px solid rgba(255,255,255,.7);
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      box-shadow:var(--shadow);margin:16px 0 22px;
+    }
+    body.dark .hero{
+      background:linear-gradient(135deg,rgba(16,28,23,.9),rgba(18,33,27,.78)),
+                 linear-gradient(135deg,rgba(30,215,96,.08),rgba(11,46,36,.18));
+      border-color:rgba(255,255,255,.08);
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 14px;border-radius:999px;
+      color:var(--green-dark);background:rgba(19,171,37,.08);
+      border:1px solid rgba(19,171,37,.12);
+      font-size:.84rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+      margin-bottom:14px;
+    }
+    body.dark .eyebrow{color:#b9f5c7;}
+    .hero h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.05;margin-bottom:10px;}
+    .hero p{color:var(--muted);line-height:1.7;max-width:72ch;}
+
+    /* Panels */
+    .panel{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius-lg);backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);padding:24px;
+    }
+    .panel-title{
+      font-size:1rem;font-weight:800;
+      margin-bottom:18px;padding-bottom:12px;
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:10px;
+    }
+    .panel-icon{
+      display:grid;place-items:center;
+      width:30px;height:30px;border-radius:8px;
+      background:var(--green-soft);color:var(--green);
+      font-size:.85rem;flex-shrink:0;
+    }
+    .gap{margin-bottom:20px;}
+
+    /* Inputs */
+    .input-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+    @media(max-width:680px){.input-grid{grid-template-columns:1fr;}}
+    .field{display:flex;flex-direction:column;gap:5px;}
+    .field label{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+    .field small{font-size:.76rem;color:var(--muted);line-height:1.5;}
+    .control{
+      padding:12px 14px;border-radius:var(--radius-sm);
+      border:1px solid var(--border-strong);background:var(--surface-strong);
+      color:var(--text);font-size:1rem;font-weight:700;
+      transition:border-color .15s,box-shadow .15s;width:100%;
+    }
+    .control:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(19,171,37,.15);}
+
+    /* KPI row */
+    .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0;}
+    @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:560px){.kpi-row{grid-template-columns:1fr;}}
+    .kpi-card{
+      padding:16px 18px;border-radius:var(--radius-md);
+      background:var(--surface);border:1px solid var(--border);
+      backdrop-filter:blur(12px);box-shadow:var(--shadow);
+    }
+    .kpi-card strong{display:block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px;}
+    .kpi-val{font-size:1.5rem;font-weight:800;color:var(--text);line-height:1.1;}
+    .kpi-sub{font-size:.77rem;color:var(--muted);margin-top:5px;}
+    .kpi-green .kpi-val{color:var(--green);}
+    .kpi-blue  .kpi-val{color:var(--blue);}
+    .kpi-red   .kpi-val{color:var(--red);}
+    .kpi-amber .kpi-val{color:var(--amber);}
+
+    /* Calc panels grid */
+    .calc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+    @media(max-width:1000px){.calc-grid{grid-template-columns:1fr;}}
+
+    /* Summary list */
+    .sl{list-style:none;}
+    .sl li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem;}
+    .sl li:last-child{border-bottom:none;}
+    .sl .lbl{color:var(--muted);}
+    .sl .val{font-weight:800;}
+    .sl .green{color:var(--green);}
+    .sl .red{color:var(--red);}
+    .sl .amber{color:var(--amber);}
+    .sl .blue{color:var(--blue);}
+    .sl li.div{border-top:2px solid var(--border-strong);padding-top:10px;font-weight:800;}
+
+    /* INSS table */
+    .tbl-wrap{overflow-x:auto;}
+    .tbl{width:100%;border-collapse:collapse;font-size:.85rem;}
+    .tbl th{text-align:left;padding:8px 10px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:2px solid var(--border);}
+    .tbl td{padding:9px 10px;border-bottom:1px solid var(--border);}
+    .tbl tr.active td{background:var(--green-soft);font-weight:700;color:var(--green-dark);}
+    .tbl tr.active td:first-child{border-left:3px solid var(--green);}
+    .tbl tr.inactive{opacity:.38;}
+    .tbl tfoot td{padding:10px;font-weight:800;border-top:2px solid var(--border-strong);}
+
+    /* Charts */
+    .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+    @media(max-width:800px){.charts-row{grid-template-columns:1fr;}}
+    .chart-wrap{position:relative;height:280px;}
+
+    /* Dashboard */
+    .dashboard{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius-xl);backdrop-filter:blur(20px);
+      box-shadow:var(--shadow);padding:36px;margin-top:8px;
+    }
+    .gradient-line{height:3px;border-radius:99px;background:linear-gradient(90deg,var(--green),transparent);margin:6px 0 18px;}
+    .dash-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0;}
+    @media(max-width:900px){.dash-kpi-row{grid-template-columns:repeat(2,1fr);}}
+    .result-card{padding:18px;border-radius:var(--radius-md);background:var(--surface-strong);border:1px solid var(--border);}
+    .result-card strong{display:block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px;}
+    .result-card span{font-size:1.4rem;font-weight:800;}
+    .result-card small{display:block;font-size:.78rem;color:var(--muted);margin-top:4px;}
+    .rc-green span{color:var(--green);}
+    .rc-blue  span{color:var(--blue);}
+    .rc-red   span{color:var(--red);}
+    .rc-amber span{color:var(--amber);}
+    .rc-purple span{color:var(--purple);}
+
+    /* Verdict */
+    .verdict-box{
+      padding:20px 24px;border:1px dashed var(--green);border-radius:var(--radius-md);
+      background:var(--green-soft);line-height:1.75;font-size:.94rem;color:var(--muted);margin:18px 0;
+    }
+    .verdict-box strong{color:var(--green-dark);}
+    body.dark .verdict-box strong{color:var(--green);}
+
+    /* Export button */
+    .btn-export-pdf{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:13px 22px;border-radius:var(--radius-sm);
+      background:linear-gradient(135deg,var(--green-dark),var(--green));
+      color:#fff;font-weight:800;font-size:.9rem;border:none;cursor:pointer;
+      box-shadow:0 8px 24px rgba(0,61,50,.2);transition:transform .15s,box-shadow .15s;
+    }
+    .btn-export-pdf:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,61,50,.28);}
+    .btn-export-pdf:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  </style>
+</head>
+<body>
+<div class="page" id="pageShell">
+  <div id="nav-placeholder"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Voltar para o Setor Pessoal (RH)</a>
+    </div>
+
+    <header class="hero">
+      <span class="eyebrow">👥 Setor Pessoal (RH)</span>
+      <h1>Calculadora CLT Completa</h1>
+      <p>Calcule folha mensal, 13° salário, férias, FGTS e IRRF com a tabela progressiva vigente 2026. Visualize o custo total anual para o empregador e exporte o relatório em PDF.</p>
+    </header>
+
+    <!-- INPUTS -->
+    <div class="panel gap">
+      <div class="panel-title"><span class="panel-icon">✏️</span> Dados do funcionário</div>
+      <div class="input-grid">
+        <div class="field">
+          <label for="cltGross">Salário bruto mensal (R$)</label>
+          <small>Mínimo: R$ 1.621,00 (salário mínimo 2026)</small>
+          <input id="cltGross" class="control" type="number" min="1621" step="1" value="5000" />
+        </div>
+        <div class="field">
+          <label for="cltDeps">Dependentes</label>
+          <small>Dedução de R$ 189,59 por dependente no IRRF</small>
+          <input id="cltDeps" class="control" type="number" min="0" step="1" value="0" />
+        </div>
+        <div class="field">
+          <label for="cltMonths">Meses trabalhados no ano</label>
+          <small>Para cálculo proporcional do 13° e das férias</small>
+          <input id="cltMonths" class="control" type="number" min="1" max="12" step="1" value="12" />
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi-card kpi-green">
+        <strong>Líquido mensal</strong>
+        <div class="kpi-val" id="kpiNet">---</div>
+        <div class="kpi-sub" id="kpiNetSub">---</div>
+      </div>
+      <div class="kpi-card kpi-blue">
+        <strong>Custo mensal empresa</strong>
+        <div class="kpi-val" id="kpiEmpMonth">---</div>
+        <div class="kpi-sub">Salário bruto + FGTS</div>
+      </div>
+      <div class="kpi-card kpi-amber">
+        <strong>INSS mensal</strong>
+        <div class="kpi-val" id="kpiInss">---</div>
+        <div class="kpi-sub" id="kpiInssSub">---</div>
+      </div>
+      <div class="kpi-card kpi-red">
+        <strong>IRRF mensal</strong>
+        <div class="kpi-val" id="kpiIrrf">---</div>
+        <div class="kpi-sub" id="kpiIrrfSub">---</div>
+      </div>
+      <div class="kpi-card">
+        <strong>13° líquido</strong>
+        <div class="kpi-val" id="kpi13Net">---</div>
+        <div class="kpi-sub" id="kpi13Sub">---</div>
+      </div>
+      <div class="kpi-card kpi-blue">
+        <strong>Custo anual empregador</strong>
+        <div class="kpi-val" id="kpiAnnual">---</div>
+        <div class="kpi-sub" id="kpiAnnualSub">---</div>
+      </div>
+    </div>
+
+    <!-- 3 COLUNAS: MENSAL · 13° · FÉRIAS -->
+    <div class="calc-grid">
+      <div class="panel">
+        <div class="panel-title"><span class="panel-icon">📋</span> Folha Mensal</div>
+        <ul class="sl" id="listMonthly"></ul>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span class="panel-icon">🎁</span> 13° Salário</div>
+        <ul class="sl" id="list13"></ul>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span class="panel-icon">🏖️</span> Férias</div>
+        <ul class="sl" id="listVacation"></ul>
+      </div>
+    </div>
+
+    <!-- INSS BREAKDOWN -->
+    <div class="panel gap">
+      <div class="panel-title"><span class="panel-icon">📊</span> Detalhamento INSS — Tabela progressiva 2026</div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Faixa</th><th>De</th><th>Até</th><th>Alíquota</th><th>Base tributável</th><th>Contribuição</th>
+            </tr>
+          </thead>
+          <tbody id="inssBody"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" style="color:var(--muted);font-size:.82rem;">Total INSS</td>
+              <td id="inssTotalBase"></td>
+              <td id="inssTotalVal" style="color:var(--amber);"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:12px;line-height:1.6;">
+        O INSS CLT é progressivo — cada faixa incide apenas sobre a parcela do salário dentro do seu intervalo. Teto: R$ 8.475,55 · Contribuição máxima: R$ 988,10.
+      </p>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-row">
+      <div class="panel">
+        <div class="panel-title"><span class="panel-icon">🥧</span> Composição do salário bruto</div>
+        <div class="chart-wrap"><canvas id="chartComposicao"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span class="panel-icon">📈</span> Custo anual do empregador</div>
+        <div class="chart-wrap"><canvas id="chartAnual"></canvas></div>
+      </div>
+    </div>
+
+    <!-- EXECUTIVE DASHBOARD -->
+    <section class="dashboard" id="dashExec">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
+        <div>
+          <span class="eyebrow">Resumo executivo</span>
+          <div class="gradient-line"></div>
+          <h2 style="font-size:1.55rem;font-weight:800;margin-bottom:8px;">Custo total e retorno ao funcionário</h2>
+          <p style="color:var(--muted);line-height:1.7;max-width:56ch;">Análise consolidada da remuneração CLT — do custo bruto ao valor líquido anual.</p>
+        </div>
+        <button type="button" id="btnExportPdf" class="btn-export-pdf">📄 Exportar PDF</button>
+      </div>
+
+      <div class="dash-kpi-row">
+        <div class="result-card rc-blue">
+          <strong>Custo anual empregador</strong>
+          <span id="dashCustoAnual">---</span>
+          <small id="dashCustoAnualSub">---</small>
+        </div>
+        <div class="result-card rc-green">
+          <strong>Líquido total funcionário</strong>
+          <span id="dashNetAnual">---</span>
+          <small>Salários + 13° + Férias</small>
+        </div>
+        <div class="result-card rc-amber">
+          <strong>Total FGTS empregador</strong>
+          <span id="dashFgts">---</span>
+          <small id="dashFgtsSub">---</small>
+        </div>
+        <div class="result-card rc-purple">
+          <strong>Custo por R$ 1 líquido</strong>
+          <span id="dashCusto1">---</span>
+          <small>Para cada R$ 1 no bolso</small>
+        </div>
+      </div>
+
+      <div class="verdict-box" id="dashVerdict">
+        Preencha os dados acima para ver a análise executiva.
+      </div>
+    </section>
+  </div>
+
+  <div id="footer-placeholder"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="../../../assets/js/auth.js"></script>
+<script src="../../../assets/js/components.js"></script>
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/utils.js"></script>
+<script>
+  // ================================================================
+  // FORMATADORES
+  // ================================================================
+  const fmtC = new Intl.NumberFormat("pt-BR", { style:"currency", currency:"BRL" });
+  const fmtP = new Intl.NumberFormat("pt-BR", { style:"percent", minimumFractionDigits:2, maximumFractionDigits:2 });
+  const C = v  => fmtC.format(isFinite(v) ? v : 0);
+  const P = v  => fmtP.format(isFinite(v) ? v : 0);
+  const rnd = v => Math.round((v + Number.EPSILON) * 100) / 100;
+  const num = v => parseFloat(String(v).replace(",",".")) || 0;
+
+  // ================================================================
+  // CONSTANTES 2026
+  // ================================================================
+  const BRACKETS_INSS = [
+    { label:"Faixa 1", from:0,       to:1621.00,  rate:0.075 },
+    { label:"Faixa 2", from:1621.00, to:2902.84,  rate:0.09  },
+    { label:"Faixa 3", from:2902.84, to:4354.27,  rate:0.12  },
+    { label:"Faixa 4", from:4354.27, to:8475.55,  rate:0.14  },
+  ];
+  const FGTS_RATE  = 0.08;
+  const DEP_DEDUC  = 189.59;
+  const IRRF_ISENT = 5000;
+
+  // ================================================================
+  // CÁLCULOS
+  // ================================================================
+  function calcINSS(gross) {
+    if (gross <= 0) return { total:0, detail: BRACKETS_INSS.map(b => ({...b,taxable:0,contribution:0,active:false})) };
+    let total = 0, prev = 0;
+    const detail = [];
+    for (const b of BRACKETS_INSS) {
+      if (gross <= prev) { detail.push({...b,taxable:0,contribution:0,active:false}); continue; }
+      const top    = Math.min(gross, b.to);
+      const taxable = rnd(top - prev);
+      const contrib = rnd(taxable * b.rate);
+      total += contrib;
+      detail.push({...b, taxable, contribution:contrib, active:true});
+      prev = b.to;
+      if (gross <= b.to) break;
+    }
+    while (detail.length < BRACKETS_INSS.length) {
+      detail.push({...BRACKETS_INSS[detail.length],taxable:0,contribution:0,active:false});
+    }
+    return { total: rnd(total), detail };
+  }
+
+  function calcIRRF(gross, inss, deps) {
+    if (gross <= 0 || gross <= IRRF_ISENT) return 0;
+    const base = gross - inss;
+    let bruto = 0;
+    if      (base <= 2428.80) bruto = 0;
+    else if (base <= 2826.65) bruto = (base * 0.075) - 182.16;
+    else if (base <= 3751.05) bruto = (base * 0.15)  - 394.16;
+    else if (base <= 4664.68) bruto = (base * 0.225) - 675.49;
+    else                      bruto = (base * 0.275) - 908.73;
+    const disc = gross <= 7350 ? Math.max(0, 978.62 - (0.133145 * gross)) : 0;
+    return rnd(Math.max(0, bruto - disc - (DEP_DEDUC * deps)));
+  }
+
+  function calcMonthly(gross, deps) {
+    const { total:inss, detail } = calcINSS(gross);
+    const irrf  = calcIRRF(gross, inss, deps);
+    const fgts  = rnd(gross * FGTS_RATE);
+    const net   = rnd(gross - inss - irrf);
+    const carga = gross > 0 ? (inss + irrf) / gross : 0;
+    return { gross, inss, irrf, fgts, net, carga, inssDetail:detail };
+  }
+
+  function calc13(gross, deps, months) {
+    const g    = rnd(gross * months / 12);
+    const inss = calcINSS(g).total;
+    const irrf = calcIRRF(g, inss, deps);
+    const fgts = rnd(g * FGTS_RATE);
+    const net  = rnd(g - inss - irrf);
+    return { gross:g, inss, irrf, fgts, net };
+  }
+
+  function calcFer(gross, deps, months) {
+    const base  = rnd(gross * months / 12);
+    const abono = rnd(base / 3);
+    const total = rnd(base + abono);
+    const inss  = calcINSS(total).total;         // INSS sobre total (base+1/3)
+    const irrf  = calcIRRF(base, inss, deps);    // IRRF só sobre base (1/3 isento)
+    const fgts  = rnd(total * FGTS_RATE);
+    const net   = rnd(total - inss - irrf);
+    return { base, abono, total, inss, irrf, fgts, net };
+  }
+
+  function calcAnual(gross, deps, months) {
+    const m = calcMonthly(gross, deps);
+    const t = calc13(gross, deps, months);
+    const v = calcFer(gross, deps, months);
+    const totalSalarios = rnd(gross * months);
+    const fgtsSal  = rnd(m.fgts * months);
+    const fgtsTotal = rnd(fgtsSal + t.fgts + v.fgts);
+    const custoTotal = rnd(totalSalarios + t.gross + v.total + fgtsTotal);
+    const netAnual   = rnd(m.net * months + t.net + v.net);
+    const custo1R    = netAnual > 0 ? rnd(custoTotal / netAnual) : 0;
+    return { totalSalarios, fgtsSal, fgts13:t.fgts, fgtsFer:v.fgts, fgtsTotal, custoTotal, netAnual, custo1R,
+             gross13:t.gross, grossFer:v.total, monthly:m, thirteenth:t, vacation:v };
+  }
+
+  // ================================================================
+  // RENDER LISTAS
+  // ================================================================
+  function row(lbl, val, cls="") { return `<li><span class="lbl">${lbl}</span><span class="val ${cls}">${val}</span></li>`; }
+  function divRow(lbl,val,cls="") { return `<li class="div"><span>${lbl}</span><span class="val ${cls}">${val}</span></li>`; }
+
+  function renderListMonthly(m) {
+    document.getElementById("listMonthly").innerHTML = [
+      row("Salário bruto", C(m.gross)),
+      row("(−) INSS",      "− " + C(m.inss), "amber"),
+      row("(−) IRRF",      "− " + C(m.irrf), "red"),
+      divRow("= Líquido mensal", C(m.net), "green"),
+      "",
+      row("FGTS (custo empregador)", C(m.fgts), "blue"),
+      row("Custo total/mês empresa", C(rnd(m.gross + m.fgts)), "blue"),
+      row("Carga sobre salário",     P(m.carga)),
+    ].join("");
+  }
+
+  function renderList13(t, months) {
+    document.getElementById("list13").innerHTML = [
+      row("Base proporcional (" + months + "/12)", C(t.gross)),
+      row("(−) INSS sobre 13°", "− " + C(t.inss), "amber"),
+      row("(−) IRRF sobre 13°", "− " + C(t.irrf), "red"),
+      divRow("= 13° líquido",   C(t.net), "green"),
+      "",
+      row("FGTS sobre 13°",     C(t.fgts), "blue"),
+    ].join("");
+  }
+
+  function renderListFer(v, months) {
+    document.getElementById("listVacation").innerHTML = [
+      row("Base proporcional (" + months + "/12)", C(v.base)),
+      row("(+) Abono 1/3 constitucional",         C(v.abono), "green"),
+      row("= Total férias",                        C(v.total)),
+      row("(−) INSS sobre férias",                 "− " + C(v.inss), "amber"),
+      row("(−) IRRF (só sobre base)",              "− " + C(v.irrf), "red"),
+      divRow("= Férias líquidas",                  C(v.net), "green"),
+      "",
+      row("FGTS sobre férias",                     C(v.fgts), "blue"),
+    ].join("");
+  }
+
+  function renderINSSTable(gross, detail) {
+    const rows = detail.map(b => {
+      const cls = b.active ? "active" : "inactive";
+      return `<tr class="${cls}">
+        <td>${b.label} (${(b.rate*100).toFixed(2)}%)</td>
+        <td>${C(b.from)}</td><td>${C(b.to)}</td>
+        <td style="font-weight:800;">${(b.rate*100).toFixed(2)}%</td>
+        <td>${b.active ? C(b.taxable) : "—"}</td>
+        <td style="color:${b.active?"var(--amber)":"inherit"};font-weight:${b.active?800:400};">${b.active ? C(b.contribution) : "—"}</td>
+      </tr>`;
+    });
+    document.getElementById("inssBody").innerHTML = rows.join("");
+    const { total } = calcINSS(gross);
+    document.getElementById("inssTotalBase").textContent = C(Math.min(gross, 8475.55));
+    document.getElementById("inssTotalVal").textContent  = C(total);
+  }
+
+  // ================================================================
+  // CHARTS
+  // ================================================================
+  let chartComp = null, chartAnual = null;
+
+  function renderCharts(m, anual) {
+    const dark = document.body.classList.contains("dark");
+    const textC = dark ? "#a7beb4" : "#6f8780";
+    const gridC = dark ? "rgba(255,255,255,.06)" : "rgba(0,0,0,.06)";
+    const border = dark ? "#0d1b15" : "#ffffff";
+
+    // Doughnut — composição mensal
+    const c1 = document.getElementById("chartComposicao").getContext("2d");
+    if (chartComp) chartComp.destroy();
+    chartComp = new Chart(c1, {
+      type: "doughnut",
+      data: {
+        labels: ["Líquido", "INSS", "IRRF", "FGTS (empregador)"],
+        datasets: [{ data:[m.net, m.inss, m.irrf, m.fgts], backgroundColor:["#13ab25","#d98208","#c0392b","#1a6cb5"], borderWidth:2, borderColor:border }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false, cutout:"62%",
+        plugins: {
+          legend:{ position:"bottom", labels:{ color:textC, padding:14, font:{ size:11, family:"Manrope" } } },
+          tooltip:{ callbacks:{ label: ctx => " " + C(ctx.raw) + " (" + P(ctx.raw / (m.gross + m.fgts)) + ")" } }
+        }
+      }
+    });
+
+    // Bar — custo anual
+    const c2 = document.getElementById("chartAnual").getContext("2d");
+    if (chartAnual) chartAnual.destroy();
+    chartAnual = new Chart(c2, {
+      type: "bar",
+      data: {
+        labels: ["Salários", "13° Salário", "Férias", "FGTS Total"],
+        datasets: [{
+          label:"Valor (R$)",
+          data:[anual.totalSalarios, anual.gross13, anual.grossFer, anual.fgtsTotal],
+          backgroundColor:["#13ab25","#d98208","#1a6cb5","#7b3fa0"],
+          borderRadius:6, borderSkipped:false,
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{ callbacks:{ label: ctx => " " + C(ctx.raw) } }
+        },
+        scales:{
+          x:{ ticks:{ color:textC, font:{size:11} }, grid:{ display:false } },
+          y:{ ticks:{ color:textC, font:{size:10}, callback: v => C(v) }, grid:{ color:gridC } }
+        }
+      }
+    });
+  }
+
+  // ================================================================
+  // DASHBOARD / VERDICT
+  // ================================================================
+  function renderDashboard(gross, deps, months, m, anual) {
+    document.getElementById("dashCustoAnual").textContent    = C(anual.custoTotal);
+    document.getElementById("dashCustoAnualSub").textContent = months + " meses · salários + encargos";
+    document.getElementById("dashNetAnual").textContent      = C(anual.netAnual);
+    document.getElementById("dashFgts").textContent         = C(anual.fgtsTotal);
+    document.getElementById("dashFgtsSub").textContent      = "Sal. + 13° + Férias";
+    document.getElementById("dashCusto1").textContent       = "R$ " + anual.custo1R.toFixed(2);
+
+    const txt =
+      `Para um salário bruto de <strong>${C(gross)}/mês</strong> com <strong>${deps} dependente(s)</strong> e ` +
+      `<strong>${months} meses</strong> trabalhados, o funcionário recebe <strong>${C(m.net)}/mês líquido</strong> ` +
+      `(carga de ${P(m.carga)}). No ano, a empresa desembolsa <strong>${C(anual.custoTotal)}</strong> ao total — ` +
+      `sendo <strong>${C(anual.totalSalarios)}</strong> em salários, <strong>${C(anual.gross13)}</strong> no 13° salário, ` +
+      `<strong>${C(anual.grossFer)}</strong> em férias e <strong>${C(anual.fgtsTotal)}</strong> de FGTS. ` +
+      `O funcionário recebe <strong>${C(anual.netAnual)}</strong> líquido no total anual. ` +
+      `Para cada <strong>R$ 1,00</strong> no bolso do colaborador, a empresa desembolsa <strong>R$ ${anual.custo1R.toFixed(2)}</strong>.`;
+    document.getElementById("dashVerdict").innerHTML = txt;
+  }
+
+  // ================================================================
+  // RENDER PRINCIPAL
+  // ================================================================
+  function render() {
+    const gross  = Math.max(0, num(document.getElementById("cltGross").value));
+    const deps   = Math.max(0, Math.floor(num(document.getElementById("cltDeps").value)));
+    const months = Math.min(12, Math.max(1, Math.floor(num(document.getElementById("cltMonths").value))));
+    if (gross <= 0) return;
+
+    const m     = calcMonthly(gross, deps);
+    const t     = calc13(gross, deps, months);
+    const v     = calcFer(gross, deps, months);
+    const anual = calcAnual(gross, deps, months);
+
+    // KPIs
+    document.getElementById("kpiNet").textContent     = C(m.net);
+    document.getElementById("kpiNetSub").textContent  = "Carga: " + P(m.carga);
+    document.getElementById("kpiEmpMonth").textContent = C(rnd(m.gross + m.fgts));
+    document.getElementById("kpiInss").textContent    = C(m.inss);
+    document.getElementById("kpiInssSub").textContent = "Alíq. efetiva: " + P(m.gross > 0 ? m.inss/m.gross : 0);
+    document.getElementById("kpiIrrf").textContent    = C(m.irrf);
+    document.getElementById("kpiIrrfSub").textContent = m.irrf === 0 ? "Isento (bruto ≤ R$ 5.000)" : "Base: " + C(m.gross - m.inss);
+    document.getElementById("kpi13Net").textContent   = C(t.net);
+    document.getElementById("kpi13Sub").textContent   = months + "/12 do salário = " + C(t.gross);
+    document.getElementById("kpiAnnual").textContent  = C(anual.custoTotal);
+    document.getElementById("kpiAnnualSub").textContent = months + " meses trabalhados";
+
+    // Listas
+    renderListMonthly(m);
+    renderList13(t, months);
+    renderListFer(v, months);
+
+    // INSS
+    renderINSSTable(gross, m.inssDetail);
+
+    // Charts
+    renderCharts(m, anual);
+
+    // Dashboard
+    renderDashboard(gross, deps, months, m, anual);
+  }
+
+  // ================================================================
+  // EXPORTAR PDF
+  // ================================================================
+  document.getElementById("btnExportPdf").addEventListener("click", function () {
+    const btn   = this;
+    const gross = Math.max(0, num(document.getElementById("cltGross").value));
+    if (gross <= 0) { alert("Preencha o salário antes de exportar."); return; }
+
+    btn.disabled = true;
+    btn.textContent = "Preparando relatório...";
+
+    const deps   = Math.max(0, Math.floor(num(document.getElementById("cltDeps").value)));
+    const months = Math.min(12, Math.max(1, Math.floor(num(document.getElementById("cltMonths").value))));
+    const m      = calcMonthly(gross, deps);
+    const t      = calc13(gross, deps, months);
+    const v      = calcFer(gross, deps, months);
+    const anual  = calcAnual(gross, deps, months);
+
+    function png(id) { try { return document.getElementById(id).toDataURL("image/png"); } catch(e) { return ""; } }
+
+    const payload = {
+      gross, deps, months,
+      monthly:    { gross:m.gross, inss:m.inss, irrf:m.irrf, fgts:m.fgts, net:m.net, carga:m.carga },
+      thirteenth: { gross:t.gross, inss:t.inss, irrf:t.irrf, fgts:t.fgts, net:t.net },
+      vacation:   { base:v.base, abono:v.abono, total:v.total, inss:v.inss, irrf:v.irrf, fgts:v.fgts, net:v.net },
+      annual:     { totalSalarios:anual.totalSalarios, gross13:anual.gross13, grossFer:anual.grossFer,
+                    fgtsTotal:anual.fgtsTotal, custoTotal:anual.custoTotal, netAnual:anual.netAnual, custo1R:anual.custo1R },
+      inssDetail: m.inssDetail,
+      verdict:    document.getElementById("dashVerdict").innerHTML,
+      chartComp:  png("chartComposicao"),
+      chartAnual: png("chartAnual"),
+    };
+
+    const novaAba = window.open("about:blank", "_blank");
+    if (!novaAba) {
+      alert("Permita pop-ups para exportar o relatório.");
+      btn.disabled = false; btn.textContent = "📄 Exportar PDF"; return;
+    }
+    novaAba.document.write('<html><body style="font-family:Arial;text-align:center;padding:60px;color:#555"><p style="font-size:18px">⏳ Gerando relatório...</p></body></html>');
+
+    fetch("api/gerar-pdf-clt.php", {
+      method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload)
+    })
+    .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+    .then(html => { novaAba.document.open(); novaAba.document.write(html); novaAba.document.close(); })
+    .catch(err => { console.error(err); novaAba.close(); alert("Erro ao gerar relatório."); })
+    .finally(() => { btn.disabled = false; btn.textContent = "📄 Exportar PDF"; });
+  });
+
+  // ================================================================
+  // EVENTOS + INIT
+  // ================================================================
+  ["cltGross","cltDeps","cltMonths"].forEach(id =>
+    document.getElementById(id).addEventListener("input", render)
+  );
+  render();
+</script>
+</body>
+</html>

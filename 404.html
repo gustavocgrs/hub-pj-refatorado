@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-base=".">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pagina nao encontrada | Hub PJ</title>
+  <link rel="icon" type="image/png" href="https://pjcontrato.com.br/wp-content/uploads/2026/01/cropped-PJ-Logo-Verde.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/hub.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+  <style>
+    .error-hero {
+      text-align: center;
+      padding: 48px 32px;
+      margin-bottom: 28px;
+    }
+
+    .error-code {
+      font-size: clamp(5rem, 12vw, 10rem);
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--green-start), var(--green-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: .25;
+    }
+
+    .error-hero h1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+      margin: 8px 0 16px;
+      max-width: 100%;
+    }
+
+    .error-hero p {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 48ch;
+      margin: 0 auto;
+    }
+
+    .error-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
+    .error-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: .95rem;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .error-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .error-btn-primary {
+      background: linear-gradient(135deg, var(--green-start), var(--green-end));
+      color: #fff;
+      box-shadow: 0 14px 28px rgba(0,61,50,.18);
+    }
+
+    .error-btn-secondary {
+      background: var(--nav-surface);
+      border: 1px solid rgba(19,171,37,.14);
+      box-shadow: var(--shadow);
+    }
+
+    .setores-section {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .setores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .setor-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      background: var(--surface-card);
+      border: 1px solid var(--card-border-soft);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      transition: .2s ease;
+    }
+
+    .setor-link:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .setor-link-icon {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, var(--green-start), var(--green-end));
+      color: #fff;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .setor-link-name {
+      font-weight: 700;
+      font-size: .95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div id="nav-placeholder"></div>
+
+    <div class="wrap">
+      <section class="error-hero glass">
+        <div class="error-code">404</div>
+        <h1>Essa pagina nao existe.</h1>
+        <p>O endereço que você tentou acessar nao foi encontrado. Pode ter sido movido ou nunca existiu.</p>
+
+        <div class="error-actions">
+          <a class="error-btn error-btn-primary" href="/">Voltar para o inicio</a>
+          <a class="error-btn error-btn-secondary" href="#setores-disponiveis">Ver setores</a>
+        </div>
+      </section>
+
+      <section class="setores-section" id="setores-disponiveis">
+        <div class="gradient-line" style="margin: 0 auto 10px;"></div>
+        <h2>Setores disponiveis</h2>
+        <p style="color:var(--muted); margin-bottom: 18px;">Acesse diretamente o setor que procura.</p>
+      </section>
+
+      <div class="setores-grid">
+        <a class="setor-link" href="/setores/comercial/">
+          <span class="setor-link-icon">🤝</span>
+          <span class="setor-link-name">Setor Comercial</span>
+        </a>
+        <a class="setor-link" href="/setores/contabil/">
+          <span class="setor-link-icon">📘</span>
+          <span class="setor-link-name">Setor Contabil</span>
+        </a>
+        <a class="setor-link" href="/setores/certificado-digital/">
+          <span class="setor-link-icon">🔐</span>
+          <span class="setor-link-name">Certificado Digital</span>
+        </a>
+        <a class="setor-link" href="/setores/marketing/">
+          <span class="setor-link-icon">📣</span>
+          <span class="setor-link-name">Setor de Marketing</span>
+        </a>
+        <a class="setor-link" href="/setores/sucesso-do-cliente/">
+          <span class="setor-link-icon">💬</span>
+          <span class="setor-link-name">Sucesso do Cliente</span>
+        </a>
+        <a class="setor-link" href="/setores/fiscal/">
+          <span class="setor-link-icon">🧾</span>
+          <span class="setor-link-name">Setor Fiscal</span>
+        </a>
+        <a class="setor-link" href="/setores/financeiro/">
+          <span class="setor-link-icon">💹</span>
+          <span class="setor-link-name">Setor Financeiro</span>
+        </a>
+        <a class="setor-link" href="/setores/paralegal/">
+          <span class="setor-link-icon">🏛️</span>
+          <span class="setor-link-name">Setor Paralegal</span>
+        </a>
+        <a class="setor-link" href="/setores/rh/">
+          <span class="setor-link-icon">👥</span>
+          <span class="setor-link-name">Setor Pessoal (RH)</span>
+        </a>
+      </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+  </div>
+
+  <script src="/assets/js/components.js"></script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/utils.js"></script>
+</body>
+</html>

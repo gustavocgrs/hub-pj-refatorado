@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-base="../../..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Projeção | Hub PJ</title>
+  <meta
+    name="description"
+    content="Calculadora de projeção de anexos, fator R, pró-labore e distribuição de impostos no padrão visual do Hub PJ."
+  />
+  <link rel="icon" type="image/png" href="https://pjcontrato.com.br/wp-content/uploads/2026/01/cropped-PJ-Logo-Verde.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #f7fbf8;
+      --bg-secondary: #ffffff;
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface-strong: rgba(255, 255, 255, 0.9);
+      --surface-soft: rgba(255, 255, 255, 0.68);
+      --text: #173d34;
+      --muted: #6f8780;
+      --green: #13ab25;
+      --green-dark: #003d32;
+      --green-soft: #e8f7ec;
+      --green-mid: #b7e7c3;
+      --border: rgba(19, 171, 37, 0.15);
+      --border-strong: rgba(19, 171, 37, 0.26);
+      --shadow: 0 24px 60px rgba(0, 61, 50, 0.1);
+      --shadow-hover: 0 28px 72px rgba(0, 61, 50, 0.16);
+      --amber: #d98208;
+      --red: #c0392b;
+      --blue: #1a6cb5;
+      --purple: #7b3fa0;
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --max-width: 1440px;
+      --nav-surface: rgba(255, 255, 255, 0.82);
+      --submenu-surface: rgba(255, 255, 255, 0.96);
+    }
+
+    body.dark {
+      --bg: #08110d;
+      --bg-secondary: #0d1b15;
+      --surface: rgba(16, 28, 23, 0.88);
+      --surface-strong: rgba(18, 33, 27, 0.94);
+      --surface-soft: rgba(18, 33, 27, 0.78);
+      --text: #eef8f1;
+      --muted: #a7beb4;
+      --green: #1ed760;
+      --green-dark: #dff7e8;
+      --green-soft: rgba(30, 215, 96, 0.1);
+      --green-mid: rgba(30, 215, 96, 0.22);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+      --shadow-hover: 0 28px 72px rgba(0, 0, 0, 0.42);
+      --amber: #ffb347;
+      --red: #ff8f86;
+      --blue: #7dc6ff;
+      --purple: #d39cff;
+      --nav-surface: rgba(16, 28, 23, 0.88);
+      --submenu-surface: rgba(14, 24, 20, 0.98);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Manrope", "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(19, 171, 37, 0.08), transparent 32%),
+        radial-gradient(circle at 85% 12%, rgba(0, 61, 50, 0.08), transparent 24%),
+        linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg) 100%);
+      color: var(--text);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    a,
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-shell {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: 24px 18px 40px;
+    }
+
+    .ambient {
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      filter: blur(34px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .ambient-left {
+      top: 70px;
+      left: -150px;
+      background: radial-gradient(circle, rgba(19, 171, 37, 0.22), transparent 68%);
+    }
+
+    .ambient-right {
+      top: 280px;
+      right: -130px;
+      background: radial-gradient(circle, rgba(0, 61, 50, 0.18), transparent 70%);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100%, var(--max-width));
+      margin: 0 auto;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto 18px;
+      width: min(100%, var(--max-width));
+      position: sticky;
+      top: 16px;
+      z-index: 30;
+    }
+
+    .nav-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: var(--nav-surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .nav-logo {
+      width: 150px;
+      height: 48px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .nav-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .nav-link,
+    .theme-toggle,
+    .nav-dropdown-toggle {
+      border: none;
+      background: transparent;
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.18s ease, transform 0.18s ease, color 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .theme-toggle:hover,
+    .nav-dropdown-toggle:hover {
+      background: rgba(19, 171, 37, 0.1);
+      transform: translateY(-1px);
+      color: var(--green);
+    }
+
+    body.dark .nav-link:hover,
+    body.dark .theme-toggle:hover,
+    body.dark .nav-dropdown-toggle:hover {
+      color: #b9f5c7;
+      background: rgba(30, 215, 96, 0.1);
+    }
+
+    .nav-dropdown {
+      position: relative;
+    }
+
+    .nav-dropdown-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .caret {
+      font-size: 11px;
+      transition: transform 0.18s ease;
+    }
+
+    .nav-dropdown.open .caret {
+      transform: rotate(180deg);
+    }
+
+    .nav-submenu {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      min-width: 270px;
+      padding: 10px;
+      border-radius: 18px;
+      background: var(--submenu-surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-hover);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-dropdown.open .nav-submenu {
+      display: flex;
+    }
+
+    .nav-submenu a {
+      display: block;
+      padding: 11px 12px;
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .nav-submenu a:hover {
+      background: rgba(19, 171, 37, 0.1);
+      color: var(--green);
+    }
+
+    .glass-panel {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.56)),
+        linear-gradient(135deg, rgba(19, 171, 37, 0.08), rgba(0, 61, 50, 0.08));
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: var(--shadow);
+    }
+
+    body.dark .glass-panel {
+      background:
+        linear-gradient(135deg, rgba(16, 28, 23, 0.9), rgba(18, 33, 27, 0.78)),
+        linear-gradient(135deg, rgba(30, 215, 96, 0.08), rgba(11, 46, 36, 0.18));
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .top {
+      margin-bottom: 20px;
+    }
+
+    .back {
+      display: inline-flex;
+      padding: 14px 18px;
+      border-radius: 16px;
+      background: var(--nav-surface);
+      border: 1px solid rgba(19, 171, 37, 0.14);
+      box-shadow: var(--shadow);
+      font-weight: 700;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 28px;
+      border-radius: var(--radius-xl);
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: var(--green-dark);
+      background: rgba(19, 171, 37, 0.08);
+      border: 1px solid rgba(19, 171, 37, 0.12);
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    body.dark .eyebrow,
+    body.dark .tag {
+      color: #b9f5c7;
+    }
+
+    .hero h1 {
+      margin: 14px 0 12px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.05;
+      max-width: 10ch;
+    }
+
+    .hero p,
+    .panel > p,
+    .compare-card p,
+    .footer-note {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 18px;
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .button:hover,
+    .module-tab:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .button-primary {
+      color: #fff;
+      background: linear-gradient(135deg, #2ad760 0%, #159749 58%, #0b5d30 100%);
+      border-color: transparent;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .button-primary:hover {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        0 18px 38px rgba(7, 56, 30, 0.28);
+    }
+
+    .button-secondary,
+    .compare-card,
+    .highlight-card,
+    .back-link {
+      color: var(--text);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+    }
+
+    .stack,
+    .app-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .result-card {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.55)),
+        linear-gradient(135deg, rgba(19, 171, 37, 0.12), rgba(0, 61, 50, 0.14));
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    body.dark .result-card {
+      background:
+        linear-gradient(160deg, rgba(19, 34, 28, 0.88), rgba(18, 33, 27, 0.72)),
+        linear-gradient(135deg, rgba(30, 215, 96, 0.08), rgba(11, 46, 36, 0.18));
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: none;
+    }
+
+    .result-card strong {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    .result-card span {
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    .compare-card {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      border-left: 3px solid var(--green);
+    }
+
+    .highlight-card {
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      border-left: 3px solid var(--green);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .highlight-card strong {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    .highlight-card span {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .compare-card h3 {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    /* Dashboard executivo */
+    .dashboard {
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .dashboard h2 { margin-bottom: 4px; font-size: 1.45rem; }
+    .dashboard > p { color: var(--muted); line-height: 1.7; margin-bottom: 22px; }
+
+    .dash-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .result-card.kpi-blue   { border-left: 4px solid var(--blue); }
+    .result-card.kpi-red    { border-left: 4px solid var(--red); }
+    .result-card.kpi-amber  { border-left: 4px solid var(--amber); }
+    .result-card.kpi-green  { border-left: 4px solid var(--green); }
+    .result-card.kpi-purple { border-left: 4px solid var(--purple); }
+
+    .result-card.kpi-blue span   { color: var(--blue); }
+    .result-card.kpi-red span    { color: var(--red); }
+    .result-card.kpi-amber span  { color: var(--amber); }
+    .result-card.kpi-green span  { color: var(--green); }
+    .result-card.kpi-purple span { color: var(--purple); }
+
+    .comp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .comp-label { min-width: 120px; max-width: 120px; font-size: 0.72rem; font-weight: 700; color: var(--muted); }
+    .comp-track { flex: 1; background: var(--border); border-radius: 99px; height: 13px; overflow: hidden; }
+    .comp-fill { height: 100%; border-radius: 99px; }
+    .comp-value { min-width: 95px; text-align: right; font-size: 0.72rem; font-weight: 800; }
+    .comp-pct { min-width: 38px; text-align: right; font-size: 0.68rem; color: var(--muted); }
+
+    .dash-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .dash-compare-panel {
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .dash-compare-panel.recommended {
+      border-color: var(--green);
+      border-width: 2px;
+      box-shadow: 0 0 0 3px rgba(19, 171, 37, 0.08), var(--shadow);
+    }
+
+    .dash-badge {
+      display: inline-flex;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+
+    .dash-badge-green { background: rgba(19, 171, 37, 0.12); color: var(--green); }
+    .dash-badge-amber { background: rgba(217, 130, 8, 0.1); color: var(--amber); }
+
+    .dash-compare-panel h3 { font-size: 1rem; margin-bottom: 14px; }
+
+    .dash-eco-panel {
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(19, 171, 37, 0.06), rgba(0, 61, 50, 0.04));
+      border: 1px dashed var(--green);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .dash-eco-panel h3 { font-size: 1rem; margin-bottom: 14px; color: var(--green); }
+    body.dark .dash-eco-panel h3 { color: #b9f5c7; }
+
+    .dash-resumo {
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      border: 2px solid rgba(19, 171, 37, 0.22);
+      background: var(--surface-soft);
+    }
+
+    .dash-resumo h3 { font-size: 1rem; margin-bottom: 14px; }
+
+    .dash-resumo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .dash-resumo-item {
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      background: var(--green-soft);
+      border-left: 4px solid var(--green);
+    }
+
+    body.dark .dash-resumo-item {
+      background: rgba(30, 215, 96, 0.06);
+    }
+
+    .dash-resumo-item strong {
+      display: block;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .dash-resumo-item span {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .dash-verdict-text {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(19, 171, 37, 0.06), rgba(0, 61, 50, 0.04));
+      border: 1px dashed var(--green);
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 900px) {
+      .dash-kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .dash-compare-grid { grid-template-columns: 1fr; }
+      .dash-resumo-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .dash-kpi-row { grid-template-columns: 1fr; }
+      .dash-resumo-grid { grid-template-columns: 1fr; }
+    }
+
+    .btn-export-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(0,61,50,.18);
+      transition: transform .18s ease, box-shadow .18s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-export-pdf:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(0,61,50,.24);
+    }
+
+    .btn-export-pdf:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    /* Ajustes para impressao/PDF */
+    @media print {
+      .page-shell { padding: 0; }
+      .top-nav, .top, .hero, .app-grid, .back-link { display: none !important; }
+      .dashboard { box-shadow: none; border: none; }
+    }
+
+    .panel {
+      padding: 24px;
+      border-radius: var(--radius-xl);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .panel h2 {
+      margin-bottom: 8px;
+      font-size: 1.45rem;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary span:first-child {
+      transform: rotate(180deg);
+    }
+
+    .section-grid,
+    .compare-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section-grid {
+      grid-template-columns: 1.1fr 1.45fr;
+      margin-top: 22px;
+    }
+
+    .compare-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-grid,
+    .results-grid,
+    .highlight-row {
+      display: grid;
+      gap: 14px;
+    }
+
+    .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .results-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .highlight-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .control {
+      width: 100%;
+      border: 1px solid var(--border-strong);
+      outline: none;
+      background: var(--surface-strong);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 14px 16px;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .control:focus {
+      border-color: rgba(19, 171, 37, 0.5);
+      box-shadow: 0 0 0 4px rgba(19, 171, 37, 0.12);
+    }
+
+    .field label,
+    .tag {
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(19, 171, 37, 0.1);
+      color: var(--green-dark);
+      font-size: 0.74rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .field small {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.65;
+    }
+
+    .result-card small {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      font-size: 0.84rem;
+      line-height: 1.65;
+    }
+
+    .panel h3,
+    .compare-card h3 {
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    thead th {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .summary-list,
+    .bullet-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .summary-list li,
+    .bullet-list li {
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+    }
+
+    .summary-list span:first-child,
+    .bullet-list span:first-child {
+      color: var(--muted);
+    }
+
+    .summary-list span:last-child,
+    .bullet-list span:last-child {
+      font-weight: 800;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border-strong);
+      background: rgba(19, 171, 37, 0.06);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .callout.warning {
+      background: rgba(217, 130, 8, 0.08);
+      border-color: rgba(217, 130, 8, 0.28);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      margin-top: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+      background: var(--surface-soft);
+    }
+
+    thead th {
+      padding: 14px 12px;
+      text-align: left;
+      background: rgba(19, 171, 37, 0.08);
+    }
+
+    tbody td {
+      padding: 13px 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    tbody tr:hover td {
+      background: rgba(19, 171, 37, 0.04);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 1180px) {
+      .hero,
+      .section-grid,
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .highlight-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav-submenu {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .form-grid,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell {
+        padding-inline: 12px;
+      }
+
+      .hero,
+      .panel {
+        padding: 20px;
+      }
+
+      .top-nav {
+        top: 10px;
+      }
+
+      .nav-pill {
+        justify-content: center;
+        border-radius: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <style>.page-shell{opacity:0;transition:opacity .3s ease}.page-shell.ready{opacity:1}</style>
+  <script>
+    (function(){var b=document.documentElement.dataset.base||".";fetch(b+"/api/auth/check-session.php").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(!d.logado){window.location.href=b+"/login.html";return}var s=document.querySelector(".page-shell");if(s)s.classList.add("ready")}).catch(function(){window.location.href=(document.documentElement.dataset.base||".")+"/login.html"})})();
+  </script>
+  <div class="page-shell">
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+
+    <nav class="top-nav">
+      <div class="nav-pill">
+        <a class="nav-logo" href="../../../index.html" aria-label="Ir para o início">
+          <img src="https://pjcontrato.com.br/wp-content/uploads/2025/12/Logos-Escritas.png" alt="Logo PJ" />
+        </a>
+        <a class="nav-link" href="../../../index.html">Início</a>
+        <div class="nav-dropdown" id="navDropdown">
+          <button type="button" class="nav-dropdown-toggle" id="navDropdownToggle">
+            <span>Setores</span>
+            <span class="caret">&#9662;</span>
+          </button>
+          <div class="nav-submenu" id="navSubmenu">
+            <a href="../../comercial/">Setor Comercial</a>
+            <a href="../../contabil/">Setor Contábil</a>
+            <a href="../../certificado-digital/">Setor de Certificado Digital</a>
+            <a href="../../marketing/">Setor de Marketing</a>
+            <a href="../../sucesso-do-cliente/">Setor de Sucesso do Cliente</a>
+            <a href="../../fiscal/">Setor Fiscal</a>
+            <a href="../../financeiro/">Setor Financeiro</a>
+            <a href="../../paralegal/">Setor Paralegal</a>
+            <a href="../../rh/">Setor Pessoal (RH)</a>
+          </div>
+        </div>
+        <a class="nav-link" href="https://wa.me/5512996862301?text=Ol%C3%A1%2C%20tenho%20uma%20sugest%C3%A3o%20para%20o%20Hub%20PJ" target="_blank" rel="noreferrer">Sugestão</a>
+        <button type="button" class="theme-toggle" id="themeToggle">Tema escuro</button>
+      </div>
+    </nav>
+
+    <div class="wrap">
+      <div class="top">
+        <a class="back" href="../">← Voltar para o setor Comercial</a>
+      </div>
+      <header class="hero glass-panel">
+        <div>
+          <span class="eyebrow">Calculadora Comercial</span>
+          <h1>Projeção de anexos.</h1>
+          <p>
+            Calculadora baseada na planilha de provisão, adaptada ao Hub com os mesmos cálculos de
+            projeção por anexo, fator R, pró-labore e distribuição dos impostos.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#module-projecao">Projeção por anexo</a>
+            <a class="button button-secondary" href="#module-fator-r">Fator R</a>
+            <a class="button button-secondary" href="#module-pro-labore">Pro-labore</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="app-grid" id="modulos">
+        <section class="panel" id="module-projecao">
+          <h2>Projeção de faturamento por anexo</h2>
+          <p>Simula o comportamento dos anexos no nacional e no exterior, com as faixas, alíquota efetiva, DAS, INSS e observações específicas de ICMS e ISS.</p>
+          <div class="section-grid">
+            <div class="stack">
+              <div class="panel">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="projectionRegime">Regime</label>
+                    <select id="projectionRegime" class="control">
+                      <option value="nacional">Nacional</option>
+                      <option value="exterior">Exterior</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="projectionAnnex">Anexo</label>
+                    <select id="projectionAnnex" class="control">
+                      <option value="I">Anexo I</option>
+                      <option value="II">Anexo II</option>
+                      <option value="III" selected>Anexo III</option>
+                      <option value="IV">Anexo IV</option>
+                      <option value="V">Anexo V</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="projectionRevenue">Faturamento mensal</label>
+                    <input id="projectionRevenue" class="control" type="number" min="0" step="0.01" value="17250" />
+                    <small>Faixa suportada na planilha: até R$ 400.000,00 por mês.</small>
+                  </div>
+                  <div class="field">
+                    <label for="projectionAccountant">Mensalidade contabilidade</label>
+                    <input id="projectionAccountant" class="control" type="number" min="0" step="0.01" value="314" />
+                    <small>Campo usado no resumo rápido inspirado na aba "Cálculo".</small>
+                  </div>
+                </div>
+                <div class="callout" id="projectionNote">
+                  O módulo mostra os tributos da projeção e destaca valores extras gerados à parte quando a planilha faz essa separação.
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Resumo rápido do cálculo</h3>
+                <ul class="summary-list" id="projectionSummaryList"></ul>
+                <div class="footer-note" id="projectionSummaryNote"></div>
+              </div>
+            </div>
+            <div class="stack">
+              <div class="results-grid">
+                <article class="result-card">
+                  <strong>Faixa</strong>
+                  <span id="projectionBracketLabel">2ª faixa</span>
+                  <small id="projectionBracketRange">Entre R$ 15 mil e R$ 30 mil por mês</small>
+                </article>
+                <article class="result-card">
+                  <strong>Alíquota efetiva</strong>
+                  <span id="projectionEffectiveRate">0,00%</span>
+                  <small id="projectionNationalRate">Alíquota base do Simples: 0,00%</small>
+                </article>
+                <article class="result-card">
+                  <strong>DAS da simulação</strong>
+                  <span id="projectionDas">R$ 0,00</span>
+                  <small id="projectionDasHelp">Valor projetado conforme a planilha</small>
+                </article>
+                <article class="result-card">
+                  <strong>Total de impostos</strong>
+                  <span id="projectionTotalTaxes">R$ 0,00</span>
+                  <small id="projectionTaxFootnote">Sem somar tributos extras pagos à parte</small>
+                </article>
+              </div>
+              <div class="highlight-row">
+                <article class="highlight-card">
+                  <strong>Lucro líquido</strong>
+                  <span id="projectionNetProfit">R$ 0,00</span>
+                </article>
+                <article class="highlight-card">
+                  <strong>INSS pessoa física</strong>
+                  <span id="projectionInssPf">R$ 0,00</span>
+                </article>
+                <article class="highlight-card">
+                  <strong>INSS patronal</strong>
+                  <span id="projectionEmployerInss">R$ 0,00</span>
+                </article>
+              </div>
+              <div class="compare-grid">
+                <article class="compare-card">
+                  <h3>Composição da projeção</h3>
+                  <p>Valores que entram no total tributário principal da simulação.</p>
+                  <ul class="summary-list" id="projectionComposition"></ul>
+                </article>
+                <article class="compare-card">
+                  <h3>Tributos gerados à parte</h3>
+                  <p>Itens destacados na planilha como pagamento separado do cálculo principal.</p>
+                  <ul class="summary-list" id="projectionExtras"></ul>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="module-fator-r">
+          <h2>Comparativo de Fator R</h2>
+          <p>Reproduz a comparação entre Anexo III e Anexo V para nacional e exterior, incluindo pró-labore, DAS, INSS, IRRF e diferença de tributos.</p>
+          <div class="section-grid">
+            <div class="stack">
+              <div class="panel">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="factorNationalRevenue">Faturamento mensal nacional</label>
+                    <input id="factorNationalRevenue" class="control" type="number" min="0" step="0.01" value="2000" />
+                  </div>
+                  <div class="field">
+                    <label for="factorExteriorRevenue">Faturamento mensal exterior</label>
+                    <input id="factorExteriorRevenue" class="control" type="number" min="0" step="0.01" value="17250" />
+                  </div>
+                </div>
+                <div class="callout warning">
+                  No trecho de exterior, a planilha original traz alíquotas efetivas fixas de 3,8% para Anexo III e 11,16% para Anexo V.
+                  Esta tela replica esse comportamento para manter a mesma saída da base enviada.
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Diferença de tributos</h3>
+                <ul class="summary-list" id="factorDifferenceList"></ul>
+              </div>
+            </div>
+            <div class="stack">
+              <div class="compare-grid">
+                <article class="compare-card">
+                  <h3>Nacional</h3>
+                  <p>Comparativo entre Anexo III sujeito ao fator R e Anexo V.</p>
+                  <ul class="summary-list" id="factorNationalList"></ul>
+                </article>
+                <article class="compare-card">
+                  <h3>Exterior</h3>
+                  <p>Comparativo reproduzindo os números e limites da planilha original.</p>
+                  <ul class="summary-list" id="factorExteriorList"></ul>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="module-pro-labore">
+          <h2>Calculadora de pro-labore</h2>
+          <p>Aplica o DARF/INSS, o IRRF com a mesma estrutura da planilha e entrega salário líquido e total de imposto.</p>
+
+          <div class="panel" style="margin-top:22px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div class="field">
+                <label for="proLaboreGross">Pro-labore bruto</label>
+                <input id="proLaboreGross" class="control" type="number" min="0" step="0.01" value="10000" />
+              </div>
+              <div class="field">
+                <label for="proLaboreDependents">Dependentes</label>
+                <small>Aplicado como dedução de R$ 189,59 por dependente, igual ao arquivo.</small>
+                <input id="proLaboreDependents" class="control" type="number" min="0" step="1" value="0" />
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;">
+            <article class="result-card"><strong>DARF / INSS</strong><span id="proLaboreDarf">R$ 0,00</span></article>
+            <article class="result-card"><strong>IRRF</strong><span id="proLaboreIrrf">R$ 0,00</span></article>
+            <article class="result-card"><strong>Salário líquido</strong><span id="proLaboreNet">R$ 0,00</span></article>
+            <article class="result-card"><strong>Total de imposto</strong><span id="proLaboreTotal">R$ 0,00</span></article>
+          </div>
+
+          <div class="panel" style="margin-top:18px;">
+            <h3>Detalhamento</h3>
+            <ul class="summary-list" id="proLaboreSummary"></ul>
+          </div>
+        </section>
+
+        <section class="panel" id="module-impostos">
+          <details>
+            <summary style="cursor:pointer;font-size:1.45rem;font-weight:800;margin-bottom:8px;list-style:none;display:flex;align-items:center;gap:10px;">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:rgba(19,171,37,.1);font-size:.75rem;transition:transform .2s ease;">&#9662;</span>
+              Distribuição dos impostos por anexo
+            </summary>
+          <p>Referência estática com a composição percentual de cada anexo, tanto no nacional quanto no exterior, de acordo com os dados presentes na planilha.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Anexo</th>
+                  <th>Faixa</th>
+                  <th>Componentes</th>
+                  <th>Total nacional</th>
+                  <th>Total internacional</th>
+                </tr>
+              </thead>
+              <tbody id="taxDistributionTable"></tbody>
+            </table>
+          </div>
+          <p class="footer-note">Os percentuais da coluna "Total internacional" servem de base para os recortes do DAS usados nas simulações. Nos anexos I, III, IV e V, a planilha ainda destaca tributos extras pagos à parte na 6ª faixa.</p>
+          </details>
+        </section>
+      </section>
+
+      <section class="dashboard" id="dashboardExecutivo">
+        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px;">
+          <div>
+            <span class="eyebrow">Resumo executivo</span>
+            <h2 style="margin-top:14px;">Melhor forma de tributar esta empresa</h2>
+            <p style="color:var(--muted);line-height:1.7;">Analise automatica com base no faturamento e regime selecionados. Compara Anexo III (com Fator R) versus Anexo V (sem Fator R).</p>
+          </div>
+          <button type="button" id="btnExportPdf" class="btn-export-pdf">Exportar PDF</button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="dash-kpi-row" id="dashKpiRow">
+          <article class="result-card kpi-blue"><strong>Faturamento mensal</strong><span id="kpiFat">---</span><small id="kpiFatSub">---</small></article>
+          <article class="result-card kpi-green"><strong>Melhor aliquota efetiva</strong><span id="kpiAliq">---</span><small id="kpiAliqSub">---</small></article>
+          <article class="result-card kpi-red"><strong>Total de impostos</strong><span id="kpiImpostos">---</span><small id="kpiImpostosSub">---</small></article>
+          <article class="result-card kpi-amber"><strong>Encargos (INSS + IRRF)</strong><span id="kpiEncargos">---</span><small id="kpiEncargosSub">---</small></article>
+          <article class="result-card kpi-purple"><strong>Pro-labore ideal</strong><span id="kpiProLabore">---</span><small id="kpiProLaboreSub">---</small></article>
+          <article class="result-card kpi-green"><strong>Lucro liquido estimado</strong><span id="kpiLucro">---</span><small id="kpiLucroSub">---</small></article>
+        </div>
+
+        <!-- Composicao do faturamento -->
+        <div class="compare-card" style="margin-bottom:22px;">
+          <h3>Composicao do faturamento (cenario recomendado)</h3>
+          <p style="color:var(--muted);margin-bottom:14px;">Distribuicao percentual de cada componente sobre o faturamento mensal.</p>
+          <div id="dashCompositionBars"></div>
+        </div>
+
+        <!-- Comparativo lado a lado (3 cenarios + economia) -->
+        <div class="dash-compare-grid">
+          <div class="dash-compare-panel" id="dashPanelIIIfr">
+            <div class="dash-badge" id="dashBadgeIIIfr">---</div>
+            <h3>Anexo III (com Fator R)</h3>
+            <small style="display:block;color:var(--muted);margin-bottom:14px;">CNAE do Anexo V que migra para o III via folha de pagamento >= 28%.</small>
+            <ul class="summary-list" id="dashListIIIfr"></ul>
+            <div style="position:relative;height:220px;margin-top:18px;"><canvas id="chartPizzaIIIfr" width="300" height="220"></canvas></div>
+          </div>
+          <div class="dash-compare-panel" id="dashPanelIII">
+            <div class="dash-badge" id="dashBadgeIII">---</div>
+            <h3>Anexo III (sem Fator R)</h3>
+            <small style="display:block;color:var(--muted);margin-bottom:14px;">CNAE naturalmente enquadrado no Anexo III. Pro-labore minimo.</small>
+            <ul class="summary-list" id="dashListIII"></ul>
+            <div style="position:relative;height:220px;margin-top:18px;"><canvas id="chartPizzaIII" width="300" height="220"></canvas></div>
+          </div>
+          <div class="dash-compare-panel" id="dashPanelV">
+            <div class="dash-badge" id="dashBadgeV">---</div>
+            <h3>Anexo V</h3>
+            <small style="display:block;color:var(--muted);margin-bottom:14px;">CNAE do Anexo V sem uso do Fator R. Pro-labore minimo.</small>
+            <ul class="summary-list" id="dashListV"></ul>
+            <div style="position:relative;height:220px;margin-top:18px;"><canvas id="chartPizzaV" width="300" height="220"></canvas></div>
+          </div>
+          <div class="dash-eco-panel">
+            <h3>Economia potencial</h3>
+            <small style="display:block;color:var(--muted);margin-bottom:14px;">Comparativo entre o melhor e o pior cenario.</small>
+            <ul class="summary-list" id="dashListEco"></ul>
+          </div>
+        </div>
+
+        <!-- Resumo final -->
+        <div class="dash-resumo">
+          <h3>Resultado final — Visao completa</h3>
+          <div class="dash-resumo-grid" id="dashResumoGrid"></div>
+        </div>
+
+        <!-- Veredicto -->
+        <div class="dash-verdict-text" id="dashVerdictText">Preencha o faturamento acima para ver a analise.</div>
+      </section>
+
+      <a class="back-link" href="../">← Voltar para as ferramentas do Comercial</a>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+    const numberFormatter = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+    const percentFormatter = new Intl.NumberFormat("pt-BR", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const PRO_LABORE_BASE = 1621;
+    const INSS_PF_DEFAULT = +(PRO_LABORE_BASE * 0.11).toFixed(2);
+    const EMPLOYER_INSS = +(1518 * 0.20).toFixed(2);
+
+    const annexConfig = {
+      I: {
+        label: "Anexo I",
+        brackets: [
+          { limit: 15000, nominal: 0.04, deduction: 0, label: "1ª faixa", range: "Até R$ 15.000,00 por mês" },
+          { limit: 30000, nominal: 0.073, deduction: 5940, label: "2ª faixa", range: "De R$ 15.000,01 até R$ 30.000,00 por mês" },
+          { limit: 60000, nominal: 0.095, deduction: 13860, label: "3ª faixa", range: "De R$ 30.000,01 até R$ 60.000,00 por mês" },
+          { limit: 150000, nominal: 0.107, deduction: 22500, label: "4ª faixa", range: "De R$ 60.000,01 até R$ 150.000,00 por mês" },
+          { limit: 300000, nominal: 0.143, deduction: 87300, label: "5ª faixa", range: "De R$ 150.000,01 até R$ 300.000,00 por mês" },
+          { limit: 400000, nominal: 0.19, deduction: 378000, label: "6ª faixa", range: "De R$ 300.000,01 até R$ 400.000,00 por mês" }
+        ],
+        exteriorShare: [0.81, 0.81, 0.81, 0.81, 0.81, 0.556],
+        extraTaxes: [{ label: "ICMS extra (18%)", rate: 0.18, onlySixth: true }]
+      },
+      II: {
+        label: "Anexo II",
+        brackets: [
+          { limit: 15000, nominal: 0.045, deduction: 0, label: "1ª faixa", range: "Até R$ 15.000,00 por mês" },
+          { limit: 30000, nominal: 0.078, deduction: 5940, label: "2ª faixa", range: "De R$ 15.000,01 até R$ 30.000,00 por mês" },
+          { limit: 60000, nominal: 0.01, deduction: 13860, label: "3ª faixa", range: "De R$ 30.000,01 até R$ 60.000,00 por mês" },
+          { limit: 150000, nominal: 0.112, deduction: 22500, label: "4ª faixa", range: "De R$ 60.000,01 até R$ 150.000,00 por mês" },
+          { limit: 300000, nominal: 0.147, deduction: 85500, label: "5ª faixa", range: "De R$ 150.000,01 até R$ 300.000,00 por mês" },
+          { limit: 400000, nominal: 0.3, deduction: 720000, label: "6ª faixa", range: "De R$ 300.000,01 até R$ 400.000,00 por mês" }
+        ],
+        exteriorShare: [0.465, 0.465, 0.465, 0.465, 0.465, 0.395],
+        extraTaxes: []
+      },
+      III: {
+        label: "Anexo III",
+        brackets: [
+          { limit: 15000, nominal: 0.06, deduction: 0, label: "1ª faixa", range: "Até R$ 15.000,00 por mês" },
+          { limit: 30000, nominal: 0.112, deduction: 9360, label: "2ª faixa", range: "De R$ 15.000,01 até R$ 30.000,00 por mês" },
+          { limit: 60000, nominal: 0.135, deduction: 17640, label: "3ª faixa", range: "De R$ 30.000,01 até R$ 60.000,00 por mês" },
+          { limit: 150000, nominal: 0.16, deduction: 35640, label: "4ª faixa", range: "De R$ 60.000,01 até R$ 150.000,00 por mês" },
+          { limit: 300000, nominal: 0.21, deduction: 125640, label: "5ª faixa", range: "De R$ 150.000,01 até R$ 300.000,00 por mês" },
+          { limit: 400000, nominal: 0.33, deduction: 648000, label: "6ª faixa", range: "De R$ 300.000,01 até R$ 400.000,00 por mês" }
+        ],
+        exteriorShare: [0.509, 0.509, 0.509, 0.509, 0.509, 0.409745],
+        extraTaxes: [
+          { label: "ICMS extra (18%)", rate: 0.18, onlySixth: true },
+          { label: "ISS extra (5%)", rate: 0.05, onlySixth: true }
+        ]
+      },
+      IV: {
+        label: "Anexo IV",
+        brackets: [
+          { limit: 15000, nominal: 0.045, deduction: 0, label: "1ª faixa", range: "Até R$ 15.000,00 por mês" },
+          { limit: 30000, nominal: 0.09, deduction: 8100, label: "2ª faixa", range: "De R$ 15.000,01 até R$ 30.000,00 por mês" },
+          { limit: 60000, nominal: 0.102, deduction: 12420, label: "3ª faixa", range: "De R$ 30.000,01 até R$ 60.000,00 por mês" },
+          { limit: 150000, nominal: 0.14, deduction: 39780, label: "4ª faixa", range: "De R$ 60.000,01 até R$ 150.000,00 por mês" },
+          { limit: 300000, nominal: 0.22, deduction: 183780, label: "5ª faixa", range: "De R$ 150.000,01 até R$ 300.000,00 por mês" },
+          { limit: 400000, nominal: 0.33, deduction: 828000, label: "6ª faixa", range: "De R$ 300.000,01 até R$ 400.000,00 por mês" }
+        ],
+        exteriorShare: [0.34, 0.35, 0.36, 0.37, 0.38, 0.75],
+        extraTaxes: [{ label: "ISS extra (5%)", rate: 0.05, onlySixth: true }],
+        employerInss: true
+      },
+      V: {
+        label: "Anexo V",
+        brackets: [
+          { limit: 15000, nominal: 0.155, deduction: 0, label: "1ª faixa", range: "Até R$ 15.000,00 por mês" },
+          { limit: 30000, nominal: 0.18, deduction: 4500, label: "2ª faixa", range: "De R$ 15.000,01 até R$ 30.000,00 por mês" },
+          { limit: 60000, nominal: 0.195, deduction: 9900, label: "3ª faixa", range: "De R$ 30.000,01 até R$ 60.000,00 por mês" },
+          { limit: 150000, nominal: 0.205, deduction: 17100, label: "4ª faixa", range: "De R$ 60.000,01 até R$ 150.000,00 por mês" },
+          { limit: 300000, nominal: 0.23, deduction: 62100, label: "5ª faixa", range: "De R$ 150.000,01 até R$ 300.000,00 por mês" },
+          { limit: 400000, nominal: 0.305, deduction: 540000, label: "6ª faixa", range: "De R$ 300.000,01 até R$ 400.000,00 por mês" }
+        ],
+        exteriorShare: [0.6885, 0.6585, 0.6285, 0.5985, 0.5935, 0.8],
+        extraTaxes: [{ label: "ISS extra (5%)", rate: 0.05, onlySixth: true }]
+      }
+    };
+
+    const taxDistribution = {
+      I: [
+        { faixa: "1ª faixa", nacional: { CPP: 0.415, CSLL: 0.035, ICMS: 0.34, IRPJ: 0.055, COFINS: 0.1274, PIS: 0.0276 }, internacional: 0.81 },
+        { faixa: "2ª faixa", nacional: { CPP: 0.415, CSLL: 0.035, ICMS: 0.34, IRPJ: 0.055, COFINS: 0.1274, PIS: 0.0276 }, internacional: 0.81 },
+        { faixa: "3ª faixa", nacional: { CPP: 0.42, CSLL: 0.035, ICMS: 0.335, IRPJ: 0.055, COFINS: 0.1274, PIS: 0.0276 }, internacional: 0.81 },
+        { faixa: "4ª faixa", nacional: { CPP: 0.42, CSLL: 0.035, ICMS: 0.335, IRPJ: 0.055, COFINS: 0.1274, PIS: 0.0276 }, internacional: 0.81 },
+        { faixa: "5ª faixa", nacional: { CPP: 0.42, CSLL: 0.035, ICMS: 0.335, IRPJ: 0.055, COFINS: 0.1274, PIS: 0.0276 }, internacional: 0.81 },
+        { faixa: "6ª faixa", nacional: { CPP: 0.421, CSLL: 0.1, ICMS: 0, IRPJ: 0.135, COFINS: 0.2827, PIS: 0.0613 }, internacional: 0.556 }
+      ],
+      II: [
+        { faixa: "1ª faixa", nacional: { CPP: 0.375, IPI: 0.075, CSLL: 0.035, ICMS: 0.32, IRPJ: 0.055, COFINS: 0.1151, PIS: 0.0249 }, internacional: 0.465 },
+        { faixa: "2ª faixa", nacional: { CPP: 0.375, IPI: 0.075, CSLL: 0.035, ICMS: 0.32, IRPJ: 0.055, COFINS: 0.1151, PIS: 0.0249 }, internacional: 0.465 },
+        { faixa: "3ª faixa", nacional: { CPP: 0.375, IPI: 0.075, CSLL: 0.035, ICMS: 0.32, IRPJ: 0.055, COFINS: 0.1151, PIS: 0.0249 }, internacional: 0.465 },
+        { faixa: "4ª faixa", nacional: { CPP: 0.375, IPI: 0.075, CSLL: 0.035, ICMS: 0.32, IRPJ: 0.055, COFINS: 0.1151, PIS: 0.0249 }, internacional: 0.465 },
+        { faixa: "5ª faixa", nacional: { CPP: 0.375, IPI: 0.075, CSLL: 0.035, ICMS: 0.32, IRPJ: 0.055, COFINS: 0.1151, PIS: 0.0249 }, internacional: 0.465 },
+        { faixa: "6ª faixa", nacional: { CPP: 0.235, IPI: 0.35, CSLL: 0.075, ICMS: 0, IRPJ: 0.085, COFINS: 0.2096, PIS: 0.0454 }, internacional: 0.395 }
+      ],
+      III: [
+        { faixa: "1ª faixa", nacional: { CPP: 0.434, ISS: 0.335, CSLL: 0.035, IRPJ: 0.04, COFINS: 0.1282, PIS: 0.0278 }, internacional: 0.509 },
+        { faixa: "2ª faixa", nacional: { CPP: 0.434, ISS: 0.32, CSLL: 0.035, IRPJ: 0.04, COFINS: 0.1405, PIS: 0.0305 }, internacional: 0.509 },
+        { faixa: "3ª faixa", nacional: { CPP: 0.434, ISS: 0.325, CSLL: 0.035, IRPJ: 0.04, COFINS: 0.1364, PIS: 0.0296 }, internacional: 0.509 },
+        { faixa: "4ª faixa", nacional: { CPP: 0.434, ISS: 0.325, CSLL: 0.035, IRPJ: 0.04, COFINS: 0.1364, PIS: 0.0296 }, internacional: 0.509 },
+        { faixa: "5ª faixa", nacional: { CPP: 0.434, ISS: 0.335, CSLL: 0.035, IRPJ: 0.04, COFINS: 0.1282, PIS: 0.0278 }, internacional: 0.509 },
+        { faixa: "6ª faixa", nacional: { CPP: 0.305, ISS: 0, CSLL: 0.15, IRPJ: 0.35, COFINS: 0.1603, PIS: 0.0347 }, internacional: 0.805 }
+      ],
+      IV: [
+        { faixa: "1ª faixa", nacional: { ISS: 0.445, CSLL: 0.152, IRPJ: 0.188, COFINS: 0.1767, PIS: 0.0383 }, internacional: 0.34 },
+        { faixa: "2ª faixa", nacional: { ISS: 0.4, CSLL: 0.152, IRPJ: 0.198, COFINS: 0.2055, PIS: 0.0445 }, internacional: 0.35 },
+        { faixa: "3ª faixa", nacional: { ISS: 0.4, CSLL: 0.152, IRPJ: 0.208, COFINS: 0.1973, PIS: 0.0427 }, internacional: 0.36 },
+        { faixa: "4ª faixa", nacional: { ISS: 0.4, CSLL: 0.192, IRPJ: 0.178, COFINS: 0.189, PIS: 0.041 }, internacional: 0.37 },
+        { faixa: "5ª faixa", nacional: { ISS: 0.4, CSLL: 0.192, IRPJ: 0.188, COFINS: 0.1808, PIS: 0.0392 }, internacional: 0.38 },
+        { faixa: "6ª faixa", nacional: { ISS: 0, CSLL: 0.215, IRPJ: 0.535, COFINS: 0.2055, PIS: 0.0445 }, internacional: 0.75 }
+      ],
+      V: [
+        { faixa: "1ª faixa", nacional: { CPP: 0.2885, ISS: 0.14, CSLL: 0.15, IRPJ: 0.25, COFINS: 0.141, PIS: 0.0305 }, internacional: 0.6885 },
+        { faixa: "2ª faixa", nacional: { CPP: 0.2785, ISS: 0.17, CSLL: 0.15, IRPJ: 0.23, COFINS: 0.141, PIS: 0.0305 }, internacional: 0.6585 },
+        { faixa: "3ª faixa", nacional: { CPP: 0.2385, ISS: 0.19, CSLL: 0.15, IRPJ: 0.24, COFINS: 0.1492, PIS: 0.0323 }, internacional: 0.6285 },
+        { faixa: "4ª faixa", nacional: { CPP: 0.2385, ISS: 0.21, CSLL: 0.15, IRPJ: 0.21, COFINS: 0.1574, PIS: 0.0341 }, internacional: 0.5985 },
+        { faixa: "5ª faixa", nacional: { CPP: 0.2385, ISS: 0.235, CSLL: 0.125, IRPJ: 0.23, COFINS: 0.141, PIS: 0.0305 }, internacional: 0.5935 },
+        { faixa: "6ª faixa", nacional: { CPP: 0.295, ISS: 0, CSLL: 0.155, IRPJ: 0.35, COFINS: 0.1644, PIS: 0.0356 }, internacional: 0.8 }
+      ]
+    };
+
+    const toCurrency = (value) => numberFormatter.format(Number.isFinite(value) ? value : 0);
+    const toPercent = (value) => percentFormatter.format(Number.isFinite(value) ? value : 0);
+    const toNumber = (value) => Number.isFinite(Number(value)) ? Number(value) : 0;
+    const round = (value) => Math.round((value + Number.EPSILON) * 100) / 100;
+
+    function getBracket(annex, monthlyRevenue) {
+      const revenue = Math.max(0, monthlyRevenue);
+      return annexConfig[annex].brackets.find((item) => revenue <= item.limit) || null;
+    }
+
+    function getBracketIndex(annex, monthlyRevenue) {
+      const revenue = Math.max(0, monthlyRevenue);
+      return annexConfig[annex].brackets.findIndex((item) => revenue <= item.limit);
+    }
+
+    function calculateEffectiveRate(annex, monthlyRevenue) {
+      const bracket = getBracket(annex, monthlyRevenue);
+      if (!bracket) return { effectiveRate: 0, bracket: null, annualRevenue: monthlyRevenue * 12 };
+      const annualRevenue = monthlyRevenue * 12;
+      const effectiveRate = annualRevenue > 0 ? (((annualRevenue * bracket.nominal) - bracket.deduction) / annualRevenue) : 0;
+      return { effectiveRate, bracket, annualRevenue };
+    }
+
+    function calculateProjection(annex, regime, monthlyRevenue) {
+      const revenue = Math.max(0, monthlyRevenue);
+      const bracketIndex = getBracketIndex(annex, revenue);
+      const { effectiveRate, bracket, annualRevenue } = calculateEffectiveRate(annex, revenue);
+      if (bracketIndex === -1 || !bracket) {
+        return { valid: false, revenue, annualRevenue, message: "A planilha trabalha com faturamento mensal até R$ 400.000,00." };
+      }
+
+      const nationalDas = round(revenue * effectiveRate);
+      const share = regime === "exterior" ? annexConfig[annex].exteriorShare[bracketIndex] : 1;
+      const simulatedDas = round(nationalDas * share);
+      const displayedRate = effectiveRate * share;
+      const inssPf = INSS_PF_DEFAULT;
+      const employerInss = annexConfig[annex].employerInss ? EMPLOYER_INSS : 0;
+      const extraTaxes = annexConfig[annex].extraTaxes.map((tax) => ({
+        label: tax.label,
+        applies: !tax.onlySixth || bracketIndex === 5,
+        value: (!tax.onlySixth || bracketIndex === 5) ? round(revenue * tax.rate) : 0
+      }));
+      const totalTaxes = round(simulatedDas + inssPf + employerInss);
+      const netProfit = round(revenue - totalTaxes);
+      const accountantFee = toNumber(document.getElementById("projectionAccountant").value);
+
+      return {
+        valid: true,
+        annex,
+        regime,
+        revenue,
+        annualRevenue,
+        bracket,
+        effectiveRate,
+        displayedRate,
+        nationalDas,
+        simulatedDas,
+        inssPf,
+        employerInss,
+        totalTaxes,
+        netProfit,
+        quickNet: round(revenue - totalTaxes - accountantFee),
+        accountantFee,
+        extraTaxes,
+        proLabore: PRO_LABORE_BASE
+      };
+    }
+
+    function calculateIrrf(grossValue, inssValue, dependents = 0) {
+      const gross = Math.max(0, grossValue);
+      if (gross <= 5000) return 0;
+      const taxableBase = gross - inssValue;
+      let bracketValue = 0;
+      if (taxableBase <= 2428.8) bracketValue = 0;
+      else if (taxableBase <= 2826.65) bracketValue = (taxableBase * 0.075) - 182.16;
+      else if (taxableBase <= 3751.05) bracketValue = (taxableBase * 0.15) - 394.16;
+      else if (taxableBase <= 4664.68) bracketValue = (taxableBase * 0.225) - 675.49;
+      else bracketValue = (taxableBase * 0.275) - 908.73;
+      const discount = gross <= 7350 ? 978.62 - (0.133145 * gross) : 0;
+      return round(Math.max(0, bracketValue - discount - (189.59 * dependents)));
+    }
+
+    function calculateFactorNational(monthlyRevenue) {
+      const revenue = Math.max(0, monthlyRevenue);
+      const annexIII = calculateEffectiveRate("III", revenue).effectiveRate;
+      const annexV = calculateEffectiveRate("V", revenue).effectiveRate;
+      const proLaboreIII = Math.max(revenue * 0.28, PRO_LABORE_BASE);
+      const proLaboreV = PRO_LABORE_BASE;
+      const dasIII = round(revenue * annexIII);
+      const dasV = round(revenue * annexV);
+      const inssIII = round(Math.min(proLaboreIII * 0.11, 932.31));
+      const inssV = INSS_PF_DEFAULT;
+      const irrfIII = calculateIrrf(proLaboreIII, inssIII, 0);
+      const irrfV = calculateIrrf(proLaboreV, inssV, 0);
+      const totalIII = round(dasIII + inssIII + irrfIII);
+      const totalV = round(dasV + inssV + irrfV);
+      return {
+        annualRevenue: revenue * 12,
+        annexIII: { rate: annexIII, proLabore: proLaboreIII, total: totalIII, net: round(revenue - totalIII) },
+        annexV: { rate: annexV, total: totalV, net: round(revenue - totalV) },
+        difference: round(totalV - totalIII)
+      };
+    }
+
+    function calculateFactorExterior(monthlyRevenue) {
+      const revenue = Math.max(0, monthlyRevenue);
+      const rateIII = 0.038;
+      const rateV = 0.1116;
+      const proLaboreIII = Math.max(revenue * 0.28, PRO_LABORE_BASE);
+      const proLaboreV = PRO_LABORE_BASE;
+      const dasIII = round(revenue * rateIII);
+      const dasV = round(revenue * rateV);
+      const inssIII = round(Math.min(proLaboreIII * 0.11, 897.31));
+      const inssV = INSS_PF_DEFAULT;
+      const irrfIII = calculateIrrf(proLaboreIII, inssIII, 0);
+      const irrfV = calculateIrrf(proLaboreV, inssV, 0);
+      const totalIII = round(dasIII + inssIII + irrfIII);
+      const totalV = round(dasV + inssV + irrfV);
+      return {
+        annualRevenue: revenue * 12,
+        annexIII: { rate: rateIII, proLabore: proLaboreIII, total: totalIII, net: round(revenue - totalIII) },
+        annexV: { rate: rateV, total: totalV, net: round(revenue - totalV) },
+        difference: round(totalV - totalIII)
+      };
+    }
+
+    function renderSummaryList(target, items) {
+      target.innerHTML = items.map((item) => `<li><span>${item.label}</span><span>${item.value}</span></li>`).join("");
+    }
+
+    function renderProjection() {
+      const annex = document.getElementById("projectionAnnex").value;
+      const regime = document.getElementById("projectionRegime").value;
+      const projection = calculateProjection(annex, regime, toNumber(document.getElementById("projectionRevenue").value));
+
+      if (!projection.valid) {
+        document.getElementById("projectionBracketLabel").textContent = "Fora da faixa";
+        document.getElementById("projectionBracketRange").textContent = projection.message;
+        document.getElementById("projectionEffectiveRate").textContent = "0,00%";
+        document.getElementById("projectionNationalRate").textContent = "Alíquota base do Simples: 0,00%";
+        document.getElementById("projectionDas").textContent = "R$ 0,00";
+        document.getElementById("projectionDasHelp").textContent = "Ajuste o faturamento para continuar.";
+        document.getElementById("projectionTotalTaxes").textContent = "R$ 0,00";
+        document.getElementById("projectionTaxFootnote").textContent = projection.message;
+        document.getElementById("projectionNetProfit").textContent = "R$ 0,00";
+        document.getElementById("projectionInssPf").textContent = "R$ 0,00";
+        document.getElementById("projectionEmployerInss").textContent = "R$ 0,00";
+        renderSummaryList(document.getElementById("projectionSummaryList"), []);
+        renderSummaryList(document.getElementById("projectionComposition"), []);
+        renderSummaryList(document.getElementById("projectionExtras"), []);
+        document.getElementById("projectionSummaryNote").textContent = projection.message;
+        document.getElementById("projectionNote").textContent = projection.message;
+        return;
+      }
+
+      document.getElementById("projectionBracketLabel").textContent = projection.bracket.label;
+      document.getElementById("projectionBracketRange").textContent = projection.bracket.range;
+      document.getElementById("projectionEffectiveRate").textContent = toPercent(projection.displayedRate);
+      document.getElementById("projectionNationalRate").textContent = `Alíquota base do Simples: ${toPercent(projection.effectiveRate)}`;
+      document.getElementById("projectionDas").textContent = toCurrency(projection.simulatedDas);
+      document.getElementById("projectionDasHelp").textContent = projection.regime === "exterior"
+        ? `Recorte internacional do DAS nacional de ${toCurrency(projection.nationalDas)}`
+        : "DAS integral da faixa simulada";
+      document.getElementById("projectionTotalTaxes").textContent = toCurrency(projection.totalTaxes);
+      document.getElementById("projectionTaxFootnote").textContent = "Sem somar tributos extras pagos à parte";
+      document.getElementById("projectionNetProfit").textContent = toCurrency(projection.netProfit);
+      document.getElementById("projectionInssPf").textContent = toCurrency(projection.inssPf);
+      document.getElementById("projectionEmployerInss").textContent = toCurrency(projection.employerInss);
+
+      renderSummaryList(document.getElementById("projectionSummaryList"), [
+        { label: "Anexo selecionado", value: `${annexConfig[annex].label} / ${projection.regime}` },
+        { label: "Faturamento mensal", value: toCurrency(projection.revenue) },
+        { label: "Faturamento anual", value: toCurrency(projection.annualRevenue) },
+        { label: "Pró-labore da planilha", value: toCurrency(projection.proLabore) },
+        { label: "Mensalidade contabilidade", value: toCurrency(projection.accountantFee) },
+        { label: "Líquido após contador", value: toCurrency(projection.quickNet) }
+      ]);
+
+      renderSummaryList(document.getElementById("projectionComposition"), [
+        { label: "DAS da simulação", value: toCurrency(projection.simulatedDas) },
+        { label: "INSS pessoa física", value: toCurrency(projection.inssPf) },
+        { label: "INSS patronal", value: toCurrency(projection.employerInss) },
+        { label: "Total de impostos", value: toCurrency(projection.totalTaxes) }
+      ]);
+
+      renderSummaryList(
+        document.getElementById("projectionExtras"),
+        projection.extraTaxes.length
+          ? projection.extraTaxes.map((item) => ({ label: item.label, value: item.applies ? toCurrency(item.value) : "Não aplicável nesta faixa" }))
+          : [{ label: "Tributos extras", value: "Não há geração separada neste anexo" }]
+      );
+
+      document.getElementById("projectionSummaryNote").textContent =
+        projection.regime === "exterior"
+          ? "No exterior, o sistema mostra o recorte internacional do DAS e, quando existir, os tributos extras destacados pela planilha."
+          : "No nacional, o total segue o DAS integral da faixa mais os encargos fixos previstos na planilha.";
+
+      document.getElementById("projectionNote").textContent = projection.extraTaxes.some((item) => item.applies && item.value > 0)
+        ? "A planilha sinaliza que esta combinação gera tributos extras pagos à parte. Eles aparecem separados do total principal."
+        : "O módulo mostra os tributos da projeção e destaca valores extras gerados à parte quando a planilha faz essa separação.";
+    }
+
+    function renderFactorR() {
+      const national = calculateFactorNational(toNumber(document.getElementById("factorNationalRevenue").value));
+      const exterior = calculateFactorExterior(toNumber(document.getElementById("factorExteriorRevenue").value));
+
+      renderSummaryList(document.getElementById("factorNationalList"), [
+        { label: "Anexo III - alíquota efetiva", value: toPercent(national.annexIII.rate) },
+        { label: "Anexo III - pró-labore", value: toCurrency(national.annexIII.proLabore) },
+        { label: "Anexo III - total impostos", value: toCurrency(national.annexIII.total) },
+        { label: "Anexo III - lucro líquido", value: toCurrency(national.annexIII.net) },
+        { label: "Anexo V - alíquota efetiva", value: toPercent(national.annexV.rate) },
+        { label: "Anexo V - total impostos", value: toCurrency(national.annexV.total) },
+        { label: "Anexo V - lucro líquido", value: toCurrency(national.annexV.net) }
+      ]);
+
+      renderSummaryList(document.getElementById("factorExteriorList"), [
+        { label: "Anexo III - alíquota efetiva", value: toPercent(exterior.annexIII.rate) },
+        { label: "Anexo III - pró-labore", value: toCurrency(exterior.annexIII.proLabore) },
+        { label: "Anexo III - total impostos", value: toCurrency(exterior.annexIII.total) },
+        { label: "Anexo III - lucro líquido", value: toCurrency(exterior.annexIII.net) },
+        { label: "Anexo V - alíquota efetiva", value: toPercent(exterior.annexV.rate) },
+        { label: "Anexo V - total impostos", value: toCurrency(exterior.annexV.total) },
+        { label: "Anexo V - lucro líquido", value: toCurrency(exterior.annexV.net) }
+      ]);
+
+      renderSummaryList(document.getElementById("factorDifferenceList"), [
+        { label: "Nacional - diferença de tributos", value: toCurrency(national.difference) },
+        { label: "Exterior - diferença de tributos", value: toCurrency(exterior.difference) },
+        { label: "Nacional - faturamento anual", value: toCurrency(national.annualRevenue) },
+        { label: "Exterior - faturamento anual", value: toCurrency(exterior.annualRevenue) }
+      ]);
+    }
+
+    function renderProLabore() {
+      const gross = toNumber(document.getElementById("proLaboreGross").value);
+      const dependents = Math.max(0, Math.floor(toNumber(document.getElementById("proLaboreDependents").value)));
+      const darf = round(Math.min(gross * 0.11, 932.31));
+      const irrf = calculateIrrf(gross, darf, dependents);
+      const net = round(gross - darf - irrf);
+      const total = round(darf + irrf);
+
+      document.getElementById("proLaboreDarf").textContent = toCurrency(darf);
+      document.getElementById("proLaboreIrrf").textContent = toCurrency(irrf);
+      document.getElementById("proLaboreNet").textContent = toCurrency(net);
+      document.getElementById("proLaboreTotal").textContent = toCurrency(total);
+
+      renderSummaryList(document.getElementById("proLaboreSummary"), [
+        { label: "Pró-labore bruto", value: toCurrency(gross) },
+        { label: "Dependentes", value: String(dependents) },
+        { label: "Base de INSS / DARF", value: toCurrency(darf) },
+        { label: "IRRF calculado", value: toCurrency(irrf) },
+        { label: "Salário líquido", value: toCurrency(net) },
+        { label: "Total de imposto", value: toCurrency(total) }
+      ]);
+    }
+
+    function renderTaxDistribution() {
+      const rows = [];
+      Object.entries(taxDistribution).forEach(([annex, items]) => {
+        items.forEach((item) => {
+          const components = Object.entries(item.nacional).map(([label, value]) => `${label}: ${toPercent(value)}`).join(" | ");
+          const nationalTotal = Object.values(item.nacional).reduce((sum, value) => sum + value, 0);
+          rows.push(`<tr><td>${annexConfig[annex].label}</td><td>${item.faixa}</td><td>${components}</td><td>${toPercent(nationalTotal)}</td><td>${toPercent(item.internacional)}</td></tr>`);
+        });
+      });
+      document.getElementById("taxDistributionTable").innerHTML = rows.join("");
+    }
+
+    const navDropdown = document.getElementById("navDropdown");
+    document.getElementById("navDropdownToggle").addEventListener("click", (event) => {
+      event.stopPropagation();
+      navDropdown.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!navDropdown.contains(event.target)) navDropdown.classList.remove("open");
+    });
+
+    const themeToggle = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark");
+      themeToggle.textContent = "Tema claro";
+    }
+
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const isDark = document.body.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      themeToggle.textContent = isDark ? "Tema claro" : "Tema escuro";
+    });
+
+    ["projectionRegime", "projectionAnnex", "projectionRevenue", "projectionAccountant"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", renderProjection);
+      document.getElementById(id).addEventListener("change", renderProjection);
+    });
+
+    ["factorNationalRevenue", "factorExteriorRevenue"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", renderFactorR);
+    });
+
+    ["proLaboreGross", "proLaboreDependents"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", renderProLabore);
+    });
+
+    function renderDashboard() {
+      const revenue = toNumber(document.getElementById("projectionRevenue").value);
+      const regime = document.getElementById("projectionRegime").value;
+      if (revenue <= 0) return;
+
+      const rateAnexoIII = regime === "exterior" ? 0.038 : calculateEffectiveRate("III", revenue).effectiveRate;
+      const rateAnexoV = regime === "exterior" ? 0.1116 : calculateEffectiveRate("V", revenue).effectiveRate;
+
+      // === Cenario 1: Anexo III COM Fator R (pro-labore = 28%) ===
+      const plIIIfr = Math.max(revenue * 0.28, PRO_LABORE_BASE);
+      const dasIIIfr = round(revenue * rateAnexoIII);
+      const inssIIIfr = round(Math.min(plIIIfr * 0.11, 932.31));
+      const irrfIIIfr = calculateIrrf(plIIIfr, inssIIIfr, 0);
+      const encIIIfr = round(inssIIIfr + irrfIIIfr);
+      const totalIIIfr = round(dasIIIfr + encIIIfr);
+      const netIIIfr = round(revenue - totalIIIfr);
+      const cargaIIIfr = totalIIIfr / revenue;
+
+      // === Cenario 2: Anexo III SEM Fator R (CNAE natural, pro-labore minimo) ===
+      const plIII = PRO_LABORE_BASE;
+      const dasIII = round(revenue * rateAnexoIII);
+      const inssIII = INSS_PF_DEFAULT;
+      const irrfIII = calculateIrrf(plIII, inssIII, 0);
+      const encIII = round(inssIII + irrfIII);
+      const totalIII = round(dasIII + encIII);
+      const netIII = round(revenue - totalIII);
+      const cargaIII = totalIII / revenue;
+
+      // === Cenario 3: Anexo V (pro-labore minimo) ===
+      const plV = PRO_LABORE_BASE;
+      const dasV = round(revenue * rateAnexoV);
+      const inssV = INSS_PF_DEFAULT;
+      const irrfV = calculateIrrf(plV, inssV, 0);
+      const encV = round(inssV + irrfV);
+      const totalV = round(dasV + encV);
+      const netV = round(revenue - totalV);
+      const cargaV = totalV / revenue;
+
+      // === Determinar melhor e pior cenario ===
+      var cenarios = [
+        { id: "IIIfr", nome: "Anexo III (Fator R)", total: totalIIIfr, net: netIIIfr, das: dasIIIfr, inss: inssIIIfr, irrf: irrfIIIfr, enc: encIIIfr, pl: plIIIfr, rate: rateAnexoIII, carga: cargaIIIfr, plDesc: "28% do faturamento" },
+        { id: "III", nome: "Anexo III (sem Fator R)", total: totalIII, net: netIII, das: dasIII, inss: inssIII, irrf: irrfIII, enc: encIII, pl: plIII, rate: rateAnexoIII, carga: cargaIII, plDesc: "Minimo legal" },
+        { id: "V", nome: "Anexo V", total: totalV, net: netV, das: dasV, inss: inssV, irrf: irrfV, enc: encV, pl: plV, rate: rateAnexoV, carga: cargaV, plDesc: "Minimo legal" }
+      ];
+      cenarios.sort(function(a, b) { return a.total - b.total; });
+      var best = cenarios[0];
+      var worst = cenarios[2];
+      var economia = round(worst.total - best.total);
+      var economiaAnual = round(economia * 12);
+
+      // === KPIs (cenario recomendado) ===
+      document.getElementById("kpiFat").textContent = toCurrency(revenue);
+      document.getElementById("kpiFatSub").textContent = toCurrency(revenue * 12) + " / ano";
+      document.getElementById("kpiAliq").textContent = toPercent(best.rate);
+      document.getElementById("kpiAliqSub").textContent = best.nome;
+      document.getElementById("kpiImpostos").textContent = toCurrency(best.total);
+      document.getElementById("kpiImpostosSub").textContent = "Carga: " + toPercent(best.carga);
+      document.getElementById("kpiEncargos").textContent = toCurrency(best.enc);
+      document.getElementById("kpiEncargosSub").textContent = "INSS + IRRF / mes";
+      document.getElementById("kpiProLabore").textContent = toCurrency(best.pl);
+      document.getElementById("kpiProLaboreSub").textContent = best.plDesc;
+      document.getElementById("kpiLucro").textContent = toCurrency(best.net);
+      document.getElementById("kpiLucroSub").textContent = "Margem: " + toPercent(best.net / revenue);
+
+      // === Barras de composicao (cenario recomendado) ===
+      var compItems = [
+        { l: "Lucro liquido", v: best.net, c: "var(--green)" },
+        { l: "DAS", v: best.das, c: "var(--red)" },
+        { l: "INSS", v: best.inss, c: "var(--amber)" },
+        { l: "IRRF", v: best.irrf, c: "var(--purple)" },
+        { l: "Pro-labore", v: best.pl, c: "var(--blue)" }
+      ];
+      document.getElementById("dashCompositionBars").innerHTML = compItems.map(function(it) {
+        var p = Math.max(0, (it.v / revenue) * 100);
+        return '<div class="comp-row"><div class="comp-label">' + it.l + '</div><div class="comp-track"><div class="comp-fill" style="width:' + p.toFixed(1) + '%;background:' + it.c + ';"></div></div><div class="comp-value" style="color:' + it.c + ';">' + toCurrency(it.v) + '</div><div class="comp-pct">' + toPercent(p / 100) + '</div></div>';
+      }).join("");
+
+      // === Badges e destaque nos paineis ===
+      function setBadge(panelId, badgeId, cen) {
+        var panel = document.getElementById(panelId);
+        var badge = document.getElementById(badgeId);
+        var isBest = cen.id === best.id;
+        panel.classList.toggle("recommended", isBest);
+        badge.textContent = isBest ? "Recomendado" : "Alternativa";
+        badge.className = "dash-badge " + (isBest ? "dash-badge-green" : "dash-badge-amber");
+      }
+      setBadge("dashPanelIIIfr", "dashBadgeIIIfr", cenarios.find(function(c) { return c.id === "IIIfr"; }));
+      setBadge("dashPanelIII", "dashBadgeIII", cenarios.find(function(c) { return c.id === "III"; }));
+      setBadge("dashPanelV", "dashBadgeV", cenarios.find(function(c) { return c.id === "V"; }));
+
+      // === Listas comparativas ===
+      function fillList(elId, c) {
+        renderSummaryList(document.getElementById(elId), [
+          { label: "Pro-labore", value: toCurrency(c.pl) },
+          { label: "DAS", value: toCurrency(c.das) },
+          { label: "INSS", value: toCurrency(c.inss) },
+          { label: "IRRF", value: toCurrency(c.irrf) },
+          { label: "Total impostos", value: toCurrency(c.total) },
+          { label: "Carga tributaria", value: toPercent(c.carga) },
+          { label: "Lucro liquido", value: toCurrency(c.net) }
+        ]);
+      }
+      fillList("dashListIIIfr", { pl: plIIIfr, das: dasIIIfr, inss: inssIIIfr, irrf: irrfIIIfr, total: totalIIIfr, carga: cargaIIIfr, net: netIIIfr });
+      fillList("dashListIII", { pl: plIII, das: dasIII, inss: inssIII, irrf: irrfIII, total: totalIII, carga: cargaIII, net: netIII });
+      fillList("dashListV", { pl: plV, das: dasV, inss: inssV, irrf: irrfV, total: totalV, carga: cargaV, net: netV });
+
+      renderSummaryList(document.getElementById("dashListEco"), [
+        { label: "Melhor cenario", value: best.nome },
+        { label: "Pior cenario", value: worst.nome },
+        { label: "Economia / mes", value: toCurrency(economia) },
+        { label: "Economia / ano", value: toCurrency(economiaAnual) },
+        { label: "Pro-labore ideal", value: toCurrency(best.pl) },
+        { label: "Fator R necessario", value: best.id === "IIIfr" ? "Sim (28%)" : "Nao" }
+      ]);
+
+      // === Resumo executivo ===
+      var resumoItems = [
+        { l: "Faturamento bruto", v: toCurrency(revenue), c: "var(--blue)" },
+        { l: "Carga tributaria", v: toPercent(best.carga), c: best.carga > 0.15 ? "var(--red)" : "var(--green)" },
+        { l: "Total impostos", v: toCurrency(best.total), c: "var(--red)" },
+        { l: "Encargos", v: toCurrency(best.enc), c: "var(--amber)" },
+        { l: "Pro-labore ideal", v: toCurrency(best.pl), c: "var(--purple)" },
+        { l: "Custo total", v: toCurrency(round(best.total + best.pl)), c: "var(--muted)" },
+        { l: "Lucro liquido", v: toCurrency(best.net), c: "var(--green)" },
+        { l: "Margem liquida", v: toPercent(best.net / revenue), c: (best.net / revenue) > 0.6 ? "var(--green)" : "var(--amber)" }
+      ];
+      document.getElementById("dashResumoGrid").innerHTML = resumoItems.map(function(it) {
+        return '<div class="dash-resumo-item" style="border-left-color:' + it.c + ';"><strong>' + it.l + '</strong><span style="color:' + it.c + ';">' + it.v + '</span></div>';
+      }).join("");
+
+      // === Graficos de pizza ===
+      var pieColors = ["#c0392b", "#d98208", "#7b3fa0", "#13ab25"];
+      var pieLabels = ["DAS", "INSS", "IRRF", "Lucro"];
+      var pieOpts = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom", labels: { color: getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#6f8780", font: { family: "Manrope", size: 11, weight: 700 }, padding: 12, usePointStyle: true, pointStyle: "circle" } } }
+      };
+
+      if (window._chartIIIfr) window._chartIIIfr.destroy();
+      window._chartIIIfr = new Chart(document.getElementById("chartPizzaIIIfr"), {
+        type: "doughnut", data: { labels: pieLabels, datasets: [{ data: [dasIIIfr, inssIIIfr, irrfIIIfr, netIIIfr], backgroundColor: pieColors, borderWidth: 0 }] }, options: pieOpts
+      });
+
+      if (window._chartIII) window._chartIII.destroy();
+      window._chartIII = new Chart(document.getElementById("chartPizzaIII"), {
+        type: "doughnut", data: { labels: pieLabels, datasets: [{ data: [dasIII, inssIII, irrfIII, netIII], backgroundColor: pieColors, borderWidth: 0 }] }, options: pieOpts
+      });
+
+      if (window._chartV) window._chartV.destroy();
+      window._chartV = new Chart(document.getElementById("chartPizzaV"), {
+        type: "doughnut", data: { labels: pieLabels, datasets: [{ data: [dasV, inssV, irrfV, netV], backgroundColor: pieColors, borderWidth: 0 }] }, options: pieOpts
+      });
+
+      // === Veredicto ===
+      var regimeLabel = regime === "exterior" ? "exterior" : "nacional";
+      document.getElementById("dashVerdictText").textContent =
+        "Para um faturamento de " + toCurrency(revenue) + "/mes no regime " + regimeLabel +
+        ", o cenario mais vantajoso e " + best.nome +
+        ", com carga tributaria de " + toPercent(best.carga) +
+        " e margem liquida de " + toPercent(best.net / revenue) +
+        ". A retirada ideal de pro-labore seria " + toCurrency(best.pl) + " (" + best.plDesc.toLowerCase() + ")" +
+        ". Comparado ao pior cenario (" + worst.nome + "), a economia e de " + toCurrency(economia) + "/mes (" + toCurrency(economiaAnual) + "/ano).";
+    }
+
+    // Conectar dashboard aos mesmos inputs da projecao
+    ["projectionRegime", "projectionRevenue"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", renderDashboard);
+      document.getElementById(id).addEventListener("change", renderDashboard);
+    });
+
+    renderProjection();
+    renderFactorR();
+    renderProLabore();
+    renderTaxDistribution();
+    renderDashboard();
+
+    /* === Exportar PDF (via PHP backend) === */
+    document.getElementById("btnExportPdf").addEventListener("click", function () {
+      var btn = this;
+
+      // Verificar se a calculadora foi preenchida
+      var revenue = toNumber(document.getElementById("projectionRevenue").value);
+      if (!revenue || revenue <= 0) {
+        alert("Preencha o faturamento antes de exportar.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Preparando relatório...";
+
+      var regime = document.getElementById("projectionRegime").value;
+
+      // Coletar KPIs
+      function kpiCard(valueId, subId) {
+        var card = document.getElementById(valueId).closest(".result-card");
+        return {
+          l: card ? card.querySelector("strong").textContent.trim() : valueId,
+          v: document.getElementById(valueId).textContent.trim(),
+          s: document.getElementById(subId).textContent.trim()
+        };
+      }
+      var kpis = [
+        kpiCard("kpiFat",      "kpiFatSub"),
+        kpiCard("kpiAliq",     "kpiAliqSub"),
+        kpiCard("kpiImpostos", "kpiImpostosSub"),
+        kpiCard("kpiEncargos", "kpiEncargosSub"),
+        kpiCard("kpiProLabore","kpiProLaboreSub"),
+        kpiCard("kpiLucro",    "kpiLucroSub")
+      ];
+
+      // Coletar listas de itens dos paineis
+      function getListItems(ulId) {
+        var items = [];
+        var ul = document.getElementById(ulId);
+        if (!ul) return items;
+        ul.querySelectorAll("li").forEach(function(li) {
+          var spans = li.querySelectorAll("span");
+          if (spans.length >= 2) items.push({ l: spans[0].textContent.trim(), v: spans[1].textContent.trim() });
+        });
+        return items;
+      }
+
+      // Coletar resumo final
+      var resumoItems = [];
+      var resumoEl = document.getElementById("dashResumoGrid");
+      if (resumoEl) {
+        resumoEl.querySelectorAll(".dash-resumo-item").forEach(function(el) {
+          var strong = el.querySelector("strong");
+          var span   = el.querySelector("span");
+          if (strong && span) resumoItems.push({ l: strong.textContent.trim(), v: span.textContent.trim() });
+        });
+      }
+
+      // Badges e veredicto
+      var badgeIIIfr = (document.getElementById("dashBadgeIIIfr") || {}).textContent || "";
+      var badgeIII   = (document.getElementById("dashBadgeIII")   || {}).textContent || "";
+      var badgeV     = (document.getElementById("dashBadgeV")     || {}).textContent || "";
+      var verdict    = (document.getElementById("dashVerdictText") || {}).textContent || "";
+
+      // Exportar graficos como PNG base64
+      function chartPng(canvasId) {
+        var c = document.getElementById(canvasId);
+        try { return c ? c.toDataURL("image/png") : ""; } catch(e) { return ""; }
+      }
+
+      var payload = {
+        faturamento: document.getElementById("kpiFat").textContent.trim(),
+        regime:      regime,
+        kpis:        kpis,
+        listIIIfr:   getListItems("dashListIIIfr"),
+        listIII:     getListItems("dashListIII"),
+        listV:       getListItems("dashListV"),
+        listEco:     getListItems("dashListEco"),
+        resumo:      resumoItems,
+        verdict:     verdict,
+        badgeIIIfr:  badgeIIIfr.trim(),
+        badgeIII:    badgeIII.trim(),
+        badgeV:      badgeV.trim(),
+        chartIIIfr:  chartPng("chartPizzaIIIfr"),
+        chartIII:    chartPng("chartPizzaIII"),
+        chartV:      chartPng("chartPizzaV")
+      };
+
+      // Abrir nova aba e postar dados via fetch
+      var novaAba = window.open("about:blank", "_blank");
+      if (!novaAba) {
+        alert("Permita pop-ups para este site para exportar o relatório.");
+        btn.disabled = false;
+        btn.textContent = "Exportar PDF";
+        return;
+      }
+      novaAba.document.write('<html><body style="font-family:Arial;text-align:center;padding:60px;color:#555">'
+        + '<p style="font-size:18px">⏳ Gerando relatório...</p></body></html>');
+
+      fetch("api/gerar-pdf.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error("Erro HTTP " + res.status);
+        return res.text();
+      })
+      .then(function(html) {
+        novaAba.document.open();
+        novaAba.document.write(html);
+        novaAba.document.close();
+        btn.disabled = false;
+        btn.textContent = "Exportar PDF";
+      })
+      .catch(function(err) {
+        console.error("Erro ao gerar relatório:", err);
+        novaAba.close();
+        alert("Erro ao gerar relatório. Verifique o console.");
+        btn.disabled = false;
+        btn.textContent = "Exportar PDF";
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+# ============================================================
+# .htaccess — Protecoes de seguranca do Hub PJ
+# ============================================================
+
+# Pagina 404 personalizada
+ErrorDocument 404 /404.html
+
+# Forcar HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Remover index.html da URL
+RewriteCond %{THE_REQUEST} /index\.html [NC]
+RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
+
+# Bloquear acesso direto ao config.php
+<Files "config.php">
+  Require all denied
+</Files>
+
+# Bloquear acesso a arquivos .sql
+<FilesMatch "\.(sql)$">
+  Require all denied
+</FilesMatch>
+
+# Bloquear acesso ao install.php
+<Files "install.php">
+  Require all denied
+</Files>
+
+# Bloquear acesso ao criar-usuarios.php
+<Files "criar-usuarios.php">
+  Require all denied
+</Files>
+
+# Bloquear acesso a pasta tmp (rate limiting)
+<IfModule mod_rewrite.c>
+  RewriteRule ^tmp/ - [F,L]
+</IfModule>
+
+# Bloquear listagem de diretorios
+Options -Indexes
+
+# Headers de seguranca
+<IfModule mod_headers.c>
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self'; frame-ancestors 'none'"
+  Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>

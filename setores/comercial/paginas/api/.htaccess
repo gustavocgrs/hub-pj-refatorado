@@ -1,0 +1,7 @@
+# Permitir apenas o gerar-pdf.php via POST (sem listagem)
+Options -Indexes
+
+# Bloquear qualquer arquivo que nao seja gerar-pdf.php
+<FilesMatch "^(?!gerar-pdf\.php$).*$">
+  Require all denied
+</FilesMatch>

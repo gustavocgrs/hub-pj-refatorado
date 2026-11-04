@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-base="../../..">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Contrato PJ Serviços - Lucro Presumido</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f7fbf8;
+            --bg-secondary: #ffffff;
+            --surface: rgba(255, 255, 255, .78);
+            --surface-strong: rgba(255, 255, 255, .9);
+            --text: #173d34;
+            --muted: #6f8780;
+            --green: #13ab25;
+            --green-dark: #003d32;
+            --green-soft: #e8f7ec;
+            --green-mid: #b7e7c3;
+            --border: rgba(19, 171, 37, .15);
+            --border-strong: rgba(19, 171, 37, .28);
+            --shadow: 0 24px 60px rgba(0, 61, 50, .10);
+            --shadow-hover: 0 28px 72px rgba(0, 61, 50, .14);
+            --amber: #d98208;
+            --red: #c0392b;
+            --blue: #1a6cb5;
+            --purple: #7b3fa0;
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 18px;
+            --radius-sm: 14px;
+            --max-width: 1440px;
+            --editable-bg: rgba(255, 251, 240, .85);
+            --editable-border: #f0b22f;
+            --ret-bg: rgba(255, 248, 240, .88);
+            --ret-border: #f5a623;
+            --readonly-bg: rgba(240, 247, 242, .9);
+            --readonly-border: #b3e6c3;
+            --nav-surface: rgba(255, 255, 255, .82);
+            --submenu-surface: rgba(255, 255, 255, .96);
+            --gray: #edf3ef;
+        }
+
+        body.dark {
+            --bg: #08110d;
+            --bg-secondary: #0d1b15;
+            --surface: rgba(16, 28, 23, .88);
+            --surface-strong: rgba(18, 33, 27, .94);
+            --text: #eef8f1;
+            --muted: #a7beb4;
+            --green: #1ed760;
+            --green-dark: #dff7e8;
+            --green-soft: rgba(30, 215, 96, .10);
+            --green-mid: rgba(30, 215, 96, .22);
+            --border: rgba(255, 255, 255, .08);
+            --border-strong: rgba(255, 255, 255, .14);
+            --shadow: 0 24px 60px rgba(0, 0, 0, .34);
+            --shadow-hover: 0 28px 72px rgba(0, 0, 0, .42);
+            --amber: #ffb347;
+            --red: #ff8f86;
+            --blue: #7dc6ff;
+            --purple: #d39cff;
+            --editable-bg: rgba(66, 45, 10, .28);
+            --editable-border: #d59a1f;
+            --ret-bg: rgba(87, 54, 10, .28);
+            --ret-border: #ffb347;
+            --readonly-bg: rgba(255, 255, 255, .04);
+            --readonly-border: rgba(255, 255, 255, .10);
+            --nav-surface: rgba(16, 28, 23, .88);
+            --submenu-surface: rgba(14, 24, 20, .98);
+            --gray: rgba(255, 255, 255, .08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(19, 171, 37, .08), transparent 32%),
+                radial-gradient(circle at 85% 12%, rgba(0, 61, 50, .08), transparent 24%),
+                linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg) 100%);
+            color: var(--text);
+            font-size: 13px;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        a,
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        .page-shell {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 24px 18px 40px;
+        }
+
+        .ambient {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            filter: blur(34px);
+            opacity: .35;
+            pointer-events: none;
+        }
+
+        .ambient-left {
+            top: 70px;
+            left: -150px;
+            background: radial-gradient(circle, rgba(19, 171, 37, .22), transparent 68%);
+        }
+
+        .ambient-right {
+            top: 280px;
+            right: -130px;
+            background: radial-gradient(circle, rgba(0, 61, 50, .18), transparent 70%);
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto 18px;
+            max-width: var(--max-width);
+            position: sticky;
+            top: 16px;
+            z-index: 30;
+        }
+
+        .nav-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px 12px;
+            border-radius: 999px;
+            background: var(--nav-surface);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .nav-logo {
+            width: 150px;
+            height: 48px;
+            border-radius: 14px;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            background: transparent;
+            flex-shrink: 0;
+        }
+
+        .nav-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-link,
+        .theme-toggle,
+        .nav-dropdown-toggle {
+            border: none;
+            background: transparent;
+            color: var(--text);
+            padding: 12px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background .18s ease, transform .18s ease, color .18s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .nav-link:hover,
+        .theme-toggle:hover,
+        .nav-dropdown-toggle:hover {
+            background: rgba(19, 171, 37, .10);
+            transform: translateY(-1px);
+            color: var(--green);
+        }
+
+        body.dark .nav-link:hover,
+        body.dark .theme-toggle:hover,
+        body.dark .nav-dropdown-toggle:hover {
+            color: #b9f5c7;
+            background: rgba(30, 215, 96, .10);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .nav-dropdown-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-dropdown-toggle .caret {
+            font-size: 11px;
+            transition: transform .18s ease;
+        }
+
+        .nav-dropdown.open .nav-dropdown-toggle .caret {
+            transform: rotate(180deg);
+        }
+
+        .nav-submenu {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            min-width: 260px;
+            padding: 10px;
+            border-radius: 18px;
+            background: var(--submenu-surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-hover);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-dropdown.open .nav-submenu {
+            display: flex;
+        }
+
+        .nav-submenu a {
+            display: block;
+            padding: 11px 12px;
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .nav-submenu a:hover {
+            background: rgba(19, 171, 37, .10);
+            color: var(--green);
+        }
+
+        .page-top {
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: var(--nav-surface);
+            border: 1px solid rgba(19, 171, 37, .14);
+            box-shadow: var(--shadow);
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .back-link:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .glass-panel {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .56)),
+                linear-gradient(135deg, rgba(19, 171, 37, .08), rgba(0, 61, 50, .08));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, .75);
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .glass-panel {
+            background:
+                linear-gradient(135deg, rgba(16, 28, 23, .88), rgba(18, 33, 27, .76)),
+                linear-gradient(135deg, rgba(30, 215, 96, .08), rgba(11, 46, 36, .16));
+            border-color: rgba(255, 255, 255, .08);
+        }
+
+        .selection-card {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            border: 1px solid rgba(255, 255, 255, .82);
+            background:
+                linear-gradient(135deg, rgba(244, 252, 247, .92), rgba(227, 244, 233, .82)),
+                radial-gradient(circle at right bottom, rgba(19, 171, 37, .14), transparent 24%),
+                radial-gradient(circle at 82% 50%, rgba(0, 61, 50, .08), transparent 22%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .selection-card {
+            border-color: rgba(255, 255, 255, .08);
+            background:
+                linear-gradient(135deg, rgba(17, 31, 25, .92), rgba(13, 26, 21, .86)),
+                radial-gradient(circle at right bottom, rgba(30, 215, 96, .12), transparent 24%),
+                radial-gradient(circle at 82% 50%, rgba(11, 46, 36, .24), transparent 22%);
+        }
+
+        .selection-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, .28), transparent 46%, rgba(19, 171, 37, .06));
+            z-index: -1;
+        }
+
+        .selection-card::after {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            border-radius: inherit;
+            border: 1px solid rgba(255, 255, 255, .45);
+            pointer-events: none;
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 18px;
+            padding: 30px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 18px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            color: var(--green);
+            background: rgba(19, 171, 37, .08);
+            border: 1px solid rgba(19, 171, 37, .12);
+            font-size: .82rem;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            margin: 14px 0 10px;
+            font-size: clamp(1.9rem, 3.6vw, 3.25rem);
+            line-height: 1.03;
+            max-width: 13ch;
+            color: var(--green-dark);
+        }
+
+        .hero-sub {
+            color: var(--muted);
+            line-height: 1.75;
+            max-width: 62ch;
+            font-size: 14px;
+        }
+
+        .hero-meta {
+            display: grid;
+            gap: 14px;
+            align-content: start;
+        }
+
+        .meta-card {
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 108px;
+        }
+
+        .meta-card strong {
+            display: block;
+            font-size: 1.15rem;
+            color: var(--green-dark);
+            margin-bottom: 6px;
+        }
+
+        .meta-card span {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0 12px;
+            color: var(--green-dark);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--green-mid);
+        }
+
+        .editable-section,
+        .card,
+        .scenario-card,
+        .footer {
+            border-radius: var(--radius-lg);
+        }
+
+        .editable-section,
+        .card {
+            box-shadow: var(--shadow);
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .editable-section:hover,
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .editable-section {
+            background: var(--editable-bg);
+            border: 2px solid var(--editable-border);
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .editable-legend {
+            font-size: 11px;
+            color: var(--amber);
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: .3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .mb14 {
+            margin-bottom: 14px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 16px 18px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .card-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--green-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-title::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, var(--green), var(--green-dark));
+            border-radius: 2px;
+        }
+
+        .kpi {
+            display: flex;
+            flex-direction: column;
+            min-height: 150px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, .84), rgba(255, 255, 255, .62));
+            border: 1px solid rgba(255, 255, 255, .74);
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .kpi {
+            background: linear-gradient(135deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .03));
+            border-color: rgba(255, 255, 255, .08);
+        }
+
+        .kpi .ico {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .kpi .val {
+            font-size: 21px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 3px;
+        }
+
+        .kpi .lbl {
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .45px;
+        }
+
+        .kpi .sub {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        .kpi-green {
+            border-left: 4px solid var(--green) !important;
+        }
+
+        .kpi-green .val {
+            color: var(--green);
+        }
+
+        .kpi-red {
+            border-left: 4px solid var(--red) !important;
+        }
+
+        .kpi-red .val {
+            color: var(--red);
+        }
+
+        .kpi-amber {
+            border-left: 4px solid var(--amber) !important;
+        }
+
+        .kpi-amber .val {
+            color: var(--amber);
+        }
+
+        .kpi-dark {
+            border-left: 4px solid var(--green-dark) !important;
+        }
+
+        .kpi-dark .val {
+            color: var(--green-dark);
+        }
+
+        .kpi-blue {
+            border-left: 4px solid var(--blue) !important;
+        }
+
+        .kpi-blue .val {
+            color: var(--blue);
+        }
+
+        .kpi-liq {
+            border-left: 4px solid var(--purple) !important;
+        }
+
+        .kpi-liq .val {
+            color: var(--purple);
+        }
+
+        .readonly-group {
+            background: var(--readonly-bg);
+            border: 1.5px solid var(--readonly-border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(8px);
+        }
+
+        .readonly-group-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--green-dark);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .ro-item label {
+            display: block;
+            font-size: 10px;
+            color: var(--green-dark);
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .ro-box {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1.5px solid var(--readonly-border);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--green-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dark .ro-box,
+        body.dark .input-wrap,
+        body.dark .ret-input-wrap,
+        body.dark .p-item select,
+        body.dark .table-wrap {
+            background: rgba(255, 255, 255, .04);
+            color: var(--text);
+        }
+
+        .badge-auto {
+            font-size: 9px;
+            background: var(--green);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 99px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .params-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            gap: 12px;
+        }
+
+        .p-item label {
+            display: block;
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 800;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .input-wrap,
+        .ret-input-wrap {
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            background: #fff;
+            overflow: hidden;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .input-wrap {
+            border: 1.5px solid var(--editable-border);
+        }
+
+        .ret-input-wrap {
+            border: 1.5px solid var(--ret-border);
+        }
+
+        .input-wrap:focus-within {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(19, 171, 37, .12);
+        }
+
+        .ret-input-wrap:focus-within {
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px rgba(224, 123, 0, .15);
+        }
+
+        .input-prefix,
+        .input-suffix {
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrap .input-prefix,
+        .input-wrap .input-suffix {
+            color: var(--amber);
+            background: #fffbf0;
+            border-right: 1px solid var(--editable-border);
+        }
+
+        .input-wrap .input-suffix {
+            border-right: none;
+            border-left: 1px solid var(--editable-border);
+        }
+
+        .ret-input-wrap .input-suffix {
+            color: var(--amber);
+            background: #fff8f0;
+            border-left: 1px solid var(--ret-border);
+        }
+
+        body.dark .input-wrap .input-prefix,
+        body.dark .input-wrap .input-suffix,
+        body.dark .ret-input-wrap .input-suffix {
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .input-wrap input,
+        .ret-input-wrap input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 8px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            outline: none;
+        }
+
+        .p-item select {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1.5px solid var(--editable-border);
+            border-radius: 10px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            outline: none;
+        }
+
+        .p-item select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(19, 171, 37, .12);
+        }
+
+        .calc-btn {
+            margin-top: 14px;
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            color: #fff;
+            border: none;
+            padding: 11px 28px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+            box-shadow: 0 14px 28px rgba(0, 61, 50, .18);
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-1px);
+            filter: saturate(1.05);
+        }
+
+        .ret-panel {
+            display: none;
+            background: var(--ret-bg);
+            border: 2px solid var(--ret-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ret-panel.show {
+            display: block;
+        }
+
+        .ret-panel-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ret-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+            gap: 10px;
+        }
+
+        .ret-item label {
+            display: block;
+            font-size: 10px;
+            color: #8a5a00;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        body.dark .ret-item label {
+            color: #ffc977;
+        }
+
+        .ret-item .tip {
+            font-size: 10px;
+            color: #a07030;
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        .liq-banner {
+            background: linear-gradient(90deg, #7b3fa0 0%, #a855f7 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 16px;
+            margin-top: 10px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 18px 36px rgba(123, 63, 160, .18);
+        }
+
+        .liq-banner.show {
+            display: flex;
+        }
+
+        .liq-banner .liq-label {
+            font-size: 11px;
+            font-weight: 700;
+            opacity: .92;
+        }
+
+        .liq-banner .liq-val {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .liq-banner .liq-desc {
+            font-size: 10px;
+            opacity: .84;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            min-width: 720px;
+        }
+
+        thead th {
+            background: var(--green);
+            color: #fff;
+            padding: 10px 7px;
+            text-align: center;
+            font-size: 10px;
+            letter-spacing: .3px;
+            position: sticky;
+            top: 0;
+        }
+
+        thead th:first-child {
+            text-align: left;
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(243, 250, 245, .9);
+        }
+
+        body.dark tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, .03);
+        }
+
+        tbody tr:hover {
+            background: var(--green-soft);
+        }
+
+        td {
+            padding: 7px 7px;
+            border-bottom: 1px solid var(--border);
+            text-align: right;
+        }
+
+        td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .tr-total {
+            background: var(--green) !important;
+        }
+
+        .tr-total td {
+            color: #fff;
+            border-bottom: none;
+            font-weight: 700;
+        }
+
+        .tr-quarter {
+            background: rgba(232, 247, 236, .95) !important;
+            font-weight: 700;
+        }
+
+        body.dark .tr-quarter {
+            background: rgba(30, 215, 96, .08) !important;
+        }
+
+        .tr-quarter td:first-child {
+            color: var(--green-dark);
+        }
+
+        .hl-red {
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        .hl-amber {
+            color: var(--amber);
+            font-weight: 700;
+        }
+
+        .hl-purple {
+            color: var(--purple);
+            font-weight: 700;
+        }
+
+        .scenario-card {
+            background: linear-gradient(135deg, #0f3f31 0%, var(--green) 100%);
+            color: #fff;
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .scenario-card .card-title {
+            color: rgba(255, 255, 255, .88);
+        }
+
+        .scenario-card .card-title::before {
+            background: rgba(255, 255, 255, .6);
+        }
+
+        .s-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .15);
+            font-size: 12px;
+            gap: 10px;
+        }
+
+        .s-row:last-child {
+            border-bottom: none;
+        }
+
+        .s-label {
+            color: rgba(255, 255, 255, .8);
+        }
+
+        .s-val {
+            font-weight: 800;
+            font-size: 13px;
+            text-align: right;
+        }
+
+        .s-lime {
+            color: #a3f0bb;
+        }
+
+        .s-pink {
+            color: #ffb3ae;
+        }
+
+        .s-yellow {
+            color: #ffe082;
+        }
+
+        .s-sky {
+            color: #b3e0ff;
+        }
+
+        .s-white {
+            color: #fff;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 99px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-left: 5px;
+        }
+
+        .tag-green {
+            background: var(--green-soft);
+            color: var(--green-dark);
+        }
+
+        .tag-red {
+            background: #fde8e8;
+            color: var(--red);
+        }
+
+        .tag-amber {
+            background: #fff3cc;
+            color: var(--amber);
+        }
+
+        body.dark .tag-red {
+            background: rgba(255, 143, 134, .10);
+        }
+
+        body.dark .tag-amber {
+            background: rgba(255, 179, 71, .10);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .chart-wrapper canvas {
+            max-width: 100% !important;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, rgba(232, 247, 236, .95), rgba(244, 252, 247, .85));
+            border: 2px solid rgba(19, 171, 37, .22);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .cta-box {
+            background: linear-gradient(135deg, rgba(30, 215, 96, .08), rgba(255, 255, 255, .03));
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, var(--green), #0b5a3f);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 12px;
+            box-shadow: 0 12px 24px rgba(0, 61, 50, .16);
+        }
+
+        .cta-btn.whatsapp {
+            background: #25d366;
+        }
+
+        .footer {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #0f3f31, #01493c);
+            color: rgba(255, 255, 255, .75);
+            padding: 14px 20px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .footer a {
+            color: #a3f0bb;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, var(--green), #0b5a3f);
+            color: #fff;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .brand-mark {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, var(--green), #0b5a3f);
+            color: #fff;
+            font-size: 18px;
+            font-weight: 800;
+            box-shadow: 0 16px 30px rgba(0, 61, 50, .18);
+            flex-shrink: 0;
+        }
+
+        @media(max-width:1100px) {
+            .grid-5 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .grid-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:960px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-wrapper {
+                height: 220px;
+            }
+        }
+
+        @media(max-width:600px) {
+            .page-shell {
+                padding: 14px 10px 28px;
+            }
+
+            .header {
+                padding: 20px 16px;
+            }
+
+            .hero-title {
+                max-width: 100%;
+                font-size: 30px;
+            }
+
+            .grid-5,
+            .grid-4,
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .params-grid,
+            .ret-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .card,
+            .editable-section,
+            .scenario-card {
+                padding: 14px;
+            }
+
+            .chart-wrapper {
+                height: 200px;
+            }
+
+            .top-nav {
+                top: 10px;
+            }
+
+            .nav-pill {
+                justify-content: center;
+                border-radius: 24px;
+            }
+
+            .nav-submenu {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        @media(max-width:480px) {
+
+            .params-grid,
+            .ret-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <style>.page-shell{opacity:0;transition:opacity .3s ease}.page-shell.ready{opacity:1}</style>
+    <script>
+      (function(){var b=document.documentElement.dataset.base||".";fetch(b+"/api/auth/check-session.php").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(!d.logado){window.location.href=b+"/login.html";return}var s=document.querySelector(".page-shell");if(s)s.classList.add("ready")}).catch(function(){window.location.href=(document.documentElement.dataset.base||".")+"/login.html"})})();
+    </script>
+    <div class="page-shell">
+        <div class="ambient ambient-left"></div>
+        <div class="ambient ambient-right"></div>
+
+        <nav class="top-nav">
+            <div class="nav-pill">
+                <a class="nav-logo" href="../../../index.html" aria-label="Ir para o início">
+                    <img src="https://pjcontrato.com.br/wp-content/uploads/2025/12/Logos-Escritas.png" alt="Logo PJ">
+                </a>
+
+                <a class="nav-link" href="../../../index.html">Início</a>
+
+                <div class="nav-dropdown" id="navDropdown">
+                    <button type="button" class="nav-dropdown-toggle" id="navDropdownToggle">
+                        <span>Setores</span>
+                        <span class="caret">▾</span>
+                    </button>
+
+                    <div class="nav-submenu" id="navSubmenu">
+                        <a href="../../comercial/">Setor Comercial</a>
+                        <a href="../../contabil/">Setor Contábil</a>
+                        <a href="../../certificado-digital/">Setor de Certificado Digital</a>
+                        <a href="../../marketing/">Setor de Marketing</a>
+                        <a href="../../sucesso-do-cliente/">Setor de Sucesso do Cliente</a>
+                        <a href="../../fiscal/">Setor Fiscal</a>
+                        <a href="../../financeiro/">Setor Financeiro</a>
+                        <a href="../../paralegal/">Setor Paralegal</a>
+                        <a href="../../rh/">Setor Pessoal (RH)</a>
+                    </div>
+                </div>
+
+                <a class="nav-link"
+                    href="https://wa.me/5512996862301?text=Ol%C3%A1%2C%20tenho%20uma%20sugest%C3%A3o%20para%20o%20Hub%20PJ"
+                    target="_blank" rel="noreferrer">
+                    Sugestão
+                </a>
+
+                <button type="button" class="theme-toggle" id="theme-toggle">🌙 Tema escuro</button>
+            </div>
+        </nav>
+
+        <div class="wrap">
+            <div class="page-top">
+                <a class="back-link" href="../">
+                    <span aria-hidden="true">←</span>
+                    <span>Voltar para as ferramentas do fiscal</span>
+                </a>
+            </div>
+
+            <div class="header glass-panel">
+                <div>
+                    <span class="eyebrow">Dashboard Tributário PJ</span>
+                    <h1 class="hero-title">Dashboard de cálculos Lucro Presumido.</h1>
+                    <p class="hero-sub">
+                        Painel de análise em Lucro Presumido com foco em prestação de serviços,
+                        fluxo de caixa real, retenções na fonte e comparação tributária em um layout
+                        alinhado ao padrão visual que estamos usando.
+                    </p>
+                </div>
+
+                <div class="hero-meta">
+                    <div class="meta-card selection-card">
+                        <strong>Lucro Presumido</strong>
+                        <span>Apuração visual com presunção automática, visão mensal e trimestral.</span>
+                    </div>
+                    <div class="meta-card selection-card">
+                        <strong>Fluxo real</strong>
+                        <span>Faturamento bruto, retenções, custo operacional e lucro líquido estimado.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="editable-section">
+                    <div class="editable-legend">🟠 PARÂMETROS EDITÁVEIS — Altere e clique em Recalcular</div>
+
+                    <div class="readonly-group">
+                        <div class="readonly-group-title">🔒 Percentuais de Presunção — calculados automaticamente pela
+                            legislação fiscal (RFB) · Fórmula: SE(fat.anual ≤ R$120k → 16% | fat.anual &gt; R$120k →
+                            32%)</div>
+                        <div
+                            style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:6px;">
+                            <div class="ro-item">
+                                <label>Presunção IRPJ — %</label>
+                                <div class="ro-box"><span id="disp_irpj">32,00%</span><span class="badge-auto"
+                                        id="badge_irpj">AUTO ✓</span></div>
+                            </div>
+                            <div class="ro-item">
+                                <label>Presunção CSLL — %</label>
+                                <div class="ro-box"><span id="disp_csll">32,00%</span><span class="badge-auto"
+                                        id="badge_csll">AUTO ✓</span></div>
+                            </div>
+                            <div class="ro-item">
+                                <label>Adicional IRPJ — R$/trim.</label>
+                                <div class="ro-box" id="box_adic">
+                                    <span id="disp_adic">R$ 0,00</span>
+                                    <span class="badge-auto" id="badge_adic" style="background:#94a3b8;">SEM
+                                        ADIC.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="params-grid">
+                        <div class="p-item">
+                            <label>Faturamento Bruto Mensal</label>
+                            <div class="input-wrap">
+                                <span class="input-prefix">R$</span>
+                                <input type="text" id="fat_mensal" value="15.000" inputmode="numeric" autocomplete="off"
+                                    oninput="maskMoeda(this)" onblur="calcular()">
+                            </div>
+                        </div>
+
+                        <div class="p-item">
+                            <label>Alíquota ISS</label>
+                            <div class="input-wrap">
+                                <input type="text" id="aliq_iss" value="2,9" inputmode="decimal" autocomplete="off"
+                                    oninput="maskDecimal(this)" onblur="calcular()">
+                                <span class="input-suffix">%</span>
+                            </div>
+                        </div>
+
+                        <div class="p-item">
+                            <label>Pró-Labore</label>
+                            <div class="input-wrap">
+                                <span class="input-prefix">R$</span>
+                                <input type="text" id="pro_labore" value="2.000" inputmode="numeric" autocomplete="off"
+                                    oninput="maskMoeda(this)" onblur="calcular()">
+                            </div>
+                        </div>
+
+                        <div class="p-item">
+                            <label>Há Retenções pelo Tomador?</label>
+                            <select id="tem_retencao" onchange="toggleRetencoes()">
+                                <option value="nao">NÃO — Sem retenções</option>
+                                <option value="sim">SIM — Valores retidos</option>
+                            </select>
+                        </div>
+
+                        <div class="p-item">
+                            <label>Serviço ao Exterior?</label>
+                            <select id="exterior">
+                                <option value="nao">NÃO — Mercado Interno</option>
+                                <option value="sim">SIM — Imune ao ISS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="ret-panel" id="ret_panel">
+                        <div class="ret-panel-title">🔒 Alíquotas de Retenção na Fonte — informadas pelo
+                            contrato/tomador</div>
+                        <div class="ret-grid">
+                            <div class="ret-item">
+                                <label>IRRF</label>
+                                <div class="ret-input-wrap">
+                                    <input type="text" id="aliq_irrf" value="1,5" inputmode="decimal" autocomplete="off"
+                                        oninput="maskDecimal(this)" onblur="calcular()">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            <div class="ret-item">
+                                <label>PIS Retido</label>
+                                <div class="ret-input-wrap">
+                                    <input type="text" id="aliq_pis_ret" value="0,65" inputmode="decimal"
+                                        autocomplete="off" oninput="maskDecimal(this)" onblur="calcular()">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            <div class="ret-item">
+                                <label>COFINS Retida</label>
+                                <div class="ret-input-wrap">
+                                    <input type="text" id="aliq_cof_ret" value="3,00" inputmode="decimal"
+                                        autocomplete="off" oninput="maskDecimal(this)" onblur="calcular()">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                            <div class="ret-item">
+                                <label>CSLL Retida</label>
+                                <div class="ret-input-wrap">
+                                    <input type="text" id="aliq_csll_ret" value="1,00" inputmode="decimal"
+                                        autocomplete="off" oninput="maskDecimal(this)" onblur="calcular()">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="liq-banner" id="liq_banner">
+                            <div>
+                                <div class="liq-label">💜 Faturamento Líquido (valor recebido após retenções)</div>
+                                <div class="liq-val" id="liq_val_banner">—</div>
+                            </div>
+                            <div style="flex:1;border-left:1px solid rgba(255,255,255,.3);padding-left:14px;">
+                                <div class="liq-desc">= Faturamento Bruto <span id="liq_desc_ret"
+                                        style="color:#e9c0ff;"></span></div>
+                                <div class="liq-desc" style="margin-top:4px;">A base de cálculo dos impostos permanece
+                                    no valor <strong>bruto</strong> — as retenções compensam o tributo a pagar.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider">📊 Indicadores Principais</div>
+                <div class="grid-5 mb14" id="kpi_grid">
+                    <div class="card kpi kpi-blue">
+                        <div class="ico">📋</div>
+                        <div class="val" id="kpi_fat">—</div>
+                        <div class="lbl">Faturamento Bruto Anual</div>
+                        <div class="sub" id="kpi_fat_sub">— / mês</div>
+                    </div>
+                    <div class="card kpi kpi-liq" id="kpi_liq_card" style="display:none;">
+                        <div class="ico">💜</div>
+                        <div class="val" id="kpi_liq">—</div>
+                        <div class="lbl">Faturamento Líquido Anual</div>
+                        <div class="sub" id="kpi_liq_sub">— retido pelo tomador</div>
+                    </div>
+                    <div class="card kpi kpi-red">
+                        <div class="ico">🏛️</div>
+                        <div class="val" id="kpi_impostos">—</div>
+                        <div class="lbl">Total Impostos</div>
+                        <div class="sub" id="kpi_carga_sub">Carga: —</div>
+                    </div>
+                    <div class="card kpi kpi-amber">
+                        <div class="ico">💼</div>
+                        <div class="val" id="kpi_encargos">—</div>
+                        <div class="lbl">Encargos INSS+PL</div>
+                        <div class="sub" id="kpi_enc_sub">— / mês</div>
+                    </div>
+                    <div class="card kpi kpi-dark">
+                        <div class="ico">💸</div>
+                        <div class="val" id="kpi_custo">—</div>
+                        <div class="lbl">Custo Total Op.</div>
+                        <div class="sub" id="kpi_custo_sub">—% do fat.</div>
+                    </div>
+                    <div class="card kpi kpi-green">
+                        <div class="ico">💰</div>
+                        <div class="val" id="kpi_lucro">—</div>
+                        <div class="lbl">Lucro Líquido Est.</div>
+                        <div class="sub" id="kpi_lucro_sub">Margem: —</div>
+                    </div>
+                </div>
+
+                <div class="card mb14 selection-card">
+                    <div class="card-title">📉 Composição do Faturamento Bruto</div>
+                    <div id="composicao_bars"></div>
+                </div>
+
+                <div class="section-divider">📅 Apuração Mensal e Trimestral</div>
+                <div class="card mb14">
+                    <div class="card-title">Fluxo de Caixa Real — Detalhamento por Mês</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead id="thead_main">
+                                <tr>
+                                    <th>Período</th>
+                                    <th>Fat. Bruto</th>
+                                    <th>Fat. Líquido</th>
+                                    <th>PIS<br><small>0,65%</small></th>
+                                    <th>COFINS<br><small>3%</small></th>
+                                    <th>ISS</th>
+                                    <th>IRPJ<br><small>trim.</small></th>
+                                    <th>Adic.<br><small>&gt;60k</small></th>
+                                    <th>CSLL<br><small>trim.</small></th>
+                                    <th>(-) Ret. Total</th>
+                                    <th>Total a Pagar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_mensal"></tbody>
+                        </table>
+                    </div>
+                    <div style="font-size:10px;color:var(--muted);margin-top:8px;font-style:italic;">⚠️ IRPJ e CSLL
+                        apurados trimestralmente. Base de cálculo = Faturamento <strong>Bruto</strong>. Retenções
+                        compensam o imposto a pagar.</div>
+                </div>
+
+                <div class="section-divider">📊 Análise Visual</div>
+                <div class="grid-2 mb14">
+                    <div class="card">
+                        <div class="card-title">Distribuição dos Impostos</div>
+                        <div class="chart-wrapper" style="height:210px;"><canvas id="chartPizza"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Impostos por Mês (R$)</div>
+                        <div class="chart-wrapper" style="height:210px;"><canvas id="chartBarras"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="grid-3 mb14">
+                    <div class="card">
+                        <div class="card-title">👤 Pró-Labore e INSS</div>
+                        <table style="width:100%;min-width:unset;">
+                            <tbody id="tbody_prolabore"></tbody>
+                        </table>
+                    </div>
+                    <div class="card"
+                        style="background:linear-gradient(135deg, rgba(255,248,240,.92), rgba(255,253,246,.88));border:1.5px solid var(--ret-border);">
+                        <div class="card-title" style="color:var(--amber);">🔒 Retenções na Fonte</div>
+                        <table style="width:100%;min-width:unset;">
+                            <tbody id="tbody_retencoes"></tbody>
+                        </table>
+                        <div style="font-size:10px;color:var(--muted);margin-top:8px;font-style:italic;">IRRF compensa
+                            IRPJ. PIS/COFINS retidos = imposto zerado.</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📐 Alíquotas e Base de Cálculo</div>
+                        <table style="width:100%;min-width:unset;">
+                            <tbody id="tbody_aliquotas"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section-divider">⚡ Simulação de Economia Tributária</div>
+                <div class="scenario-card">
+                    <div class="card-title">Comparativo — Lucro Presumido vs. Simples Nacional</div>
+                    <div class="grid-3" style="margin-top:10px;">
+                        <div>
+                            <div
+                                style="color:rgba(255,255,255,.75);font-size:10px;font-weight:800;margin-bottom:8px;text-transform:uppercase;">
+                                📌 Lucro Presumido</div>
+                            <div class="s-row"><span class="s-label">Fat. Bruto</span><span class="s-val s-sky"
+                                    id="sc_lp_fat">—</span></div>
+                            <div class="s-row"><span class="s-label">Total Impostos</span><span class="s-val s-pink"
+                                    id="sc_lp_imp">—</span></div>
+                            <div class="s-row"><span class="s-label">Carga Efetiva</span><span class="s-val s-yellow"
+                                    id="sc_lp_carga">—</span></div>
+                            <div class="s-row"><span class="s-label">Lucro Líquido</span><span class="s-val s-lime"
+                                    id="sc_lp_lucro">—</span></div>
+                        </div>
+                        <div>
+                            <div
+                                style="color:rgba(255,255,255,.75);font-size:10px;font-weight:800;margin-bottom:8px;text-transform:uppercase;">
+                                🟡 Simples Nacional (Est.)</div>
+                            <div class="s-row"><span class="s-label">Fat. Bruto</span><span class="s-val s-sky"
+                                    id="sc_sn_fat">—</span></div>
+                            <div class="s-row"><span class="s-label">Total Impostos</span><span class="s-val s-pink"
+                                    id="sc_sn_imp">—</span></div>
+                            <div class="s-row"><span class="s-label">Carga Efetiva</span><span class="s-val s-yellow"
+                                    id="sc_sn_carga">—</span></div>
+                            <div class="s-row"><span class="s-label">Lucro Líquido</span><span class="s-val s-lime"
+                                    id="sc_sn_lucro">—</span></div>
+                        </div>
+                        <div>
+                            <div
+                                style="color:rgba(255,255,255,.75);font-size:10px;font-weight:800;margin-bottom:8px;text-transform:uppercase;">
+                                💡 Economia Potencial</div>
+                            <div class="s-row"><span class="s-label">Diferença</span><span class="s-val s-white"
+                                    id="sc_diff">—</span></div>
+                            <div class="s-row"><span class="s-label">Eco. / Ano</span><span class="s-val s-lime"
+                                    id="sc_eco_ano">—</span></div>
+                            <div class="s-row"><span class="s-label">Eco. / Mês</span><span class="s-val s-lime"
+                                    id="sc_eco_mes">—</span></div>
+                            <div class="s-row"><span class="s-label">Regime Indicado</span><span class="s-val s-white"
+                                    id="sc_indicado">—</span></div>
+                        </div>
+                    </div>
+                    <div style="color:rgba(255,255,255,.55);font-size:10px;margin-top:10px;font-style:italic;">* Simples
+                        Nacional Anexo III estimado. Consulte um especialista para decisão final.</div>
+                </div>
+
+                <div class="section-divider">🏁 Resumo Executivo</div>
+                <div class="card mb14" style="border:2px solid rgba(19,171,37,.22);">
+                    <div class="card-title">Resultado Final — Visão Completa</div>
+                    <div class="grid-4" id="resumo_grid" style="margin-top:8px;"></div>
+                </div>
+
+                <div class="cta-box">
+                    <div>
+                        <div style="font-size:14px;font-weight:800;color:var(--green-dark);">🚀 Quer pagar menos
+                            impostos?</div>
+                        <div style="font-size:12px;color:var(--muted);margin-top:3px;">Fale com a equipe e faça um
+                            planejamento tributário personalizado.</div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <a href="https://pjcontrato.com.br" class="cta-btn">🌐 pjcontrato.com.br</a>
+                        <a href="https://wa.me/5511963666701" class="cta-btn whatsapp">📲 (11) 96366-6701</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="footer-logo">
+                    <div class="footer-badge">PJ</div>
+                    <span>© 2026 <strong style="color:#fff;">PJ Contrato Serviços</strong> — Todos os direitos
+                        reservados</span>
+                </div>
+                <span>Dashboard Lucro Presumido · Prestação de Serviços</span>
+                <a href="https://pjcontrato.com.br">pjcontrato.com.br</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById("theme-toggle");
+        const savedTheme = localStorage.getItem("theme");
+        const navDropdown = document.getElementById("navDropdown");
+        const navDropdownToggle = document.getElementById("navDropdownToggle");
+
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark");
+            themeToggle.textContent = "☀️ Tema claro";
+        }
+
+        themeToggle.addEventListener("click", () => {
+            document.body.classList.toggle("dark");
+            const isDark = document.body.classList.contains("dark");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            themeToggle.textContent = isDark ? "☀️ Tema claro" : "🌙 Tema escuro";
+        });
+
+        navDropdownToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            navDropdown.classList.toggle("open");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!navDropdown.contains(e.target)) {
+                navDropdown.classList.remove("open");
+            }
+        });
+    </script>
+
+    <script>
+        // ── Presunção — somente prestação de serviços ─────────────────
+        // Fórmula da planilha: =SE(fat_mensal*12<=120000; 16%; 32%)
+        // Comércio/Transporte desconsiderados — dashboard exclusivo para serviços
+        let ppIRPJ = 0.32, ppCSLL = 0.32;
+        let chartPizza = null, chartBarras = null;
+        const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const pct = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+        function calcularPresuncao(atividade, fatMensal) {
+            const fatAnual = fatMensal * 12;
+            if (fatAnual <= 120000) {
+                return { irpj: 0.16, csll: 0.16, limiar: 'baixo' };
+            } else {
+                return { irpj: 0.32, csll: 0.32, limiar: 'alto' };
+            }
+        }
+
+        function atualizarPresuncao() {
+            const fat = parseVal('fat_mensal') || 15000;
+            const p = calcularPresuncao('SERVICOS', fat);
+            ppIRPJ = p.irpj; ppCSLL = p.csll;
+            document.getElementById('disp_irpj').textContent = (ppIRPJ * 100).toFixed(2).replace('.', ',') + '%';
+            document.getElementById('disp_csll').textContent = (ppCSLL * 100).toFixed(2).replace('.', ',') + '%';
+            const cor = p.limiar === 'baixo' ? '#e07b00' : 'var(--green)';
+            document.getElementById('badge_irpj').style.background = cor;
+            document.getElementById('badge_csll').style.background = cor;
+            calcular();
+        }
+
+        function toggleRetencoes() {
+            const temRet = document.getElementById('tem_retencao').value === 'sim';
+            document.getElementById('ret_panel').classList.toggle('show', temRet);
+            document.getElementById('liq_banner').classList.toggle('show', temRet);
+            calcular();
+        }
+
+        function parseVal(id) {
+            const raw = document.getElementById(id).value
+                .replace(/\./g, '')
+                .replace(',', '.');
+            return parseFloat(raw) || 0;
+        }
+
+        function maskMoeda(el) {
+            const cur = el.selectionStart;
+            const prev = el.value.length;
+            let digits = el.value.replace(/\D/g, '');
+            if (!digits) { el.value = ''; return; }
+            el.value = parseInt(digits, 10).toLocaleString('pt-BR');
+            const diff = el.value.length - prev;
+            el.setSelectionRange(cur + diff, cur + diff);
+            atualizarPresuncao();
+        }
+
+        function maskDecimal(el) {
+            let v = el.value.replace(/[^0-9,]/g, '');
+            const parts = v.split(',');
+            if (parts.length > 2) v = parts[0] + ',' + parts.slice(1).join('');
+            el.value = v;
+        }
+
+        function getNum(id) { return parseVal(id); }
+
+        function calcular() {
+            const _fat0 = parseVal('fat_mensal') || 15000;
+            const _p = calcularPresuncao('SERVICOS', _fat0);
+            ppIRPJ = _p.irpj; ppCSLL = _p.csll;
+            document.getElementById('disp_irpj').textContent = (ppIRPJ * 100).toFixed(2).replace('.', ',') + '%';
+            document.getElementById('disp_csll').textContent = (ppCSLL * 100).toFixed(2).replace('.', ',') + '%';
+            const corBadge = _p.limiar === 'baixo' ? '#e07b00' : 'var(--green)';
+            document.getElementById('badge_irpj').style.background = corBadge;
+            document.getElementById('badge_csll').style.background = corBadge;
+
+            const fat = _fat0;
+            const aISS = getNum('aliq_iss') / 100 || 0.029;
+            const plab = getNum('pro_labore') || 2000;
+            const temRet = document.getElementById('tem_retencao').value === 'sim';
+            const ext = document.getElementById('exterior').value === 'sim';
+
+            const aIRRF = temRet ? getNum('aliq_irrf') / 100 : 0;
+            const aPisRet = temRet ? getNum('aliq_pis_ret') / 100 : 0;
+            const aCofRet = temRet ? getNum('aliq_cof_ret') / 100 : 0;
+            const aCsllRet = temRet ? getNum('aliq_csll_ret') / 100 : 0;
+
+            const PIS = 0.0065, COF = 0.03, IRPJ_R = 0.15, ADIC = 0.10, CSLL_R = 0.09, INSSs = 0.11, INSSp = 0.20;
+            const issEf = ext ? 0 : aISS;
+
+            const ret_irrf = fat * aIRRF;
+            const ret_pis = fat * aPisRet;
+            const ret_cof = fat * aCofRet;
+            const ret_csll = fat * aCsllRet;
+            const ret_total_m = ret_irrf + ret_pis + ret_cof + ret_csll;
+
+            const fat_liq_m = fat - ret_total_m;
+            const fat_liq_a = fat_liq_m * 12;
+
+            const pis_pag = temRet ? Math.max(0, fat * PIS - ret_pis) : fat * PIS;
+            const cof_pag = temRet ? Math.max(0, fat * COF - ret_cof) : fat * COF;
+            const iss = fat * issEf;
+
+            const fat_trim = fat * 3;
+            const base_irpj_t = fat_trim * ppIRPJ;
+            const irpj_bruto = base_irpj_t * IRPJ_R;
+            const adic_t = base_irpj_t > 60000 ? (base_irpj_t - 60000) * ADIC : 0;
+            const irrf_trim = ret_irrf * 3;
+            const irpj_pag = Math.max(0, irpj_bruto + adic_t - irrf_trim);
+
+            const adicBox = document.getElementById('box_adic');
+            const adicBadge = document.getElementById('badge_adic');
+            document.getElementById('disp_adic').textContent = fmt(adic_t) + '/trim.';
+            if (adic_t > 0) {
+                adicBadge.textContent = '⚠️ INCIDE!';
+                adicBadge.style.background = '#c0392b';
+                adicBox.style.borderColor = '#c0392b';
+                adicBox.style.background = '#fde8e8';
+            } else {
+                adicBadge.textContent = 'SEM ADIC.';
+                adicBadge.style.background = '#94a3b8';
+                adicBox.style.borderColor = 'var(--readonly-border)';
+                adicBox.style.background = '#fff';
+            }
+
+            const base_csll_t = fat_trim * ppCSLL;
+            const csll_bruto = base_csll_t * CSLL_R;
+            const csll_ret_trim = ret_csll * 3;
+            const csll_t = Math.max(0, csll_bruto - csll_ret_trim);
+
+            const t_pis = pis_pag * 12;
+            const t_cof = cof_pag * 12;
+            const t_iss = iss * 12;
+            const t_irpj = irpj_pag * 4;
+            const t_adic = adic_t * 4;
+            const t_csll = csll_t * 4;
+            const t_imp = t_pis + t_cof + t_iss + t_irpj + t_csll;
+            const t_ret = ret_total_m * 12;
+            const fat_a = fat * 12;
+            const carga = (t_imp / fat_a) * 100;
+
+            const inss_s = plab * INSSs, inss_p = plab * INSSp;
+            const base_ir = plab - inss_s;
+            let ir_pl = 0;
+            if (base_ir > 4664.68) ir_pl = (base_ir - 4664.68) * 0.275 - 896.00;
+            else if (base_ir > 3751.06) ir_pl = (base_ir - 3751.06) * 0.225 - 662.77;
+            else if (base_ir > 2826.66) ir_pl = (base_ir - 2826.66) * 0.150 - 354.80;
+            else if (base_ir > 2259.21) ir_pl = (base_ir - 2259.21) * 0.075 - 169.44;
+            ir_pl = Math.max(0, ir_pl);
+
+            const t_inss_s = inss_s * 12, t_inss_p = inss_p * 12, t_plab = plab * 12;
+            const t_enc = t_inss_s + t_inss_p + t_plab;
+            const custo = t_imp + t_enc;
+            const lucro = fat_a - custo;
+            const margem = (lucro / fat_a) * 100;
+
+            if (temRet) {
+                document.getElementById('liq_val_banner').textContent = fmt(fat_liq_m) + ' / mês  |  ' + fmt(fat_liq_a) + ' / ano';
+                document.getElementById('liq_desc_ret').textContent = '− ' + fmt(ret_total_m) + '/mês (retido)';
+                document.getElementById('liq_banner').classList.add('show');
+            } else {
+                document.getElementById('liq_banner').classList.remove('show');
+            }
+
+            document.getElementById('kpi_fat').textContent = fmt(fat_a);
+            document.getElementById('kpi_fat_sub').textContent = fmt(fat) + ' bruto / mês';
+            document.getElementById('kpi_impostos').textContent = fmt(t_imp);
+            document.getElementById('kpi_carga_sub').textContent = 'Carga: ' + pct(carga);
+            document.getElementById('kpi_encargos').textContent = fmt(t_enc);
+            document.getElementById('kpi_enc_sub').textContent = fmt(inss_s + inss_p + plab) + ' / mês';
+            document.getElementById('kpi_custo').textContent = fmt(custo);
+            document.getElementById('kpi_custo_sub').textContent = pct((custo / fat_a) * 100) + ' do fat. bruto';
+            document.getElementById('kpi_lucro').textContent = fmt(lucro);
+            document.getElementById('kpi_lucro_sub').textContent = 'Margem: ' + pct(margem);
+
+            const liqCard = document.getElementById('kpi_liq_card');
+            if (temRet) {
+                liqCard.style.display = 'flex';
+                document.getElementById('kpi_liq').textContent = fmt(fat_liq_a);
+                document.getElementById('kpi_liq_sub').textContent = fmt(t_ret) + ' retido / ano';
+            } else {
+                liqCard.style.display = 'none';
+            }
+
+            document.getElementById('kpi_grid').style.gridTemplateColumns = temRet
+                ? 'repeat(6,1fr)' : 'repeat(5,1fr)';
+
+            const compItems = [
+                { l: 'Lucro Líquido', v: lucro, c: '#03a437' },
+                { l: 'Impostos', v: t_imp, c: '#c0392b' },
+                { l: 'Pró-Labore', v: t_plab, c: '#1a6cb5' },
+                { l: 'INSS Patronal', v: t_inss_p, c: '#d98208' },
+                { l: 'INSS Sócio', v: t_inss_s, c: '#7b3fa0' },
+            ];
+            if (temRet) compItems.splice(1, 0, { l: 'Retenções (tomador)', v: t_ret, c: '#a855f7' });
+            document.getElementById('composicao_bars').innerHTML = compItems.map(it => {
+                const p = Math.max(0, (it.v / fat_a) * 100);
+                return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+      <div style="min-width:130px;max-width:130px;font-size:11px;font-weight:700;color:var(--muted);">${it.l}</div>
+      <div style="flex:1;background:var(--gray);border-radius:99px;height:13px;overflow:hidden;min-width:0;">
+        <div style="width:${p.toFixed(1)}%;background:${it.c};height:100%;border-radius:99px;"></div>
+      </div>
+      <div style="min-width:100px;text-align:right;font-size:11px;font-weight:800;color:${it.c};">${fmt(it.v)}</div>
+      <div style="min-width:38px;text-align:right;font-size:10px;color:var(--muted);">${pct(p)}</div>
+    </div>`;
+            }).join('');
+
+            let tbody = '', tPis = 0, tCof = 0, tIss = 0, tIrpj = 0, tAdic = 0, tCsll = 0, tRet = 0, tPag = 0, tLiq = 0;
+            for (let i = 0; i < 12; i++) {
+                const isTrim = (i === 2 || i === 5 || i === 8 || i === 11);
+                const irpjL = isTrim ? irpj_pag : 0, adicL = isTrim ? adic_t : 0, csllL = isTrim ? csll_t : 0;
+                const total = pis_pag + cof_pag + iss + irpjL + csllL;
+                tPis += pis_pag; tCof += cof_pag; tIss += iss; tIrpj += irpjL; tAdic += adicL; tCsll += csllL;
+                tRet += ret_total_m; tPag += total; tLiq += fat_liq_m;
+                const rc = isTrim ? ' class="tr-quarter"' : '';
+                tbody += `<tr${rc}>
+      <td>${meses[i]}/26${isTrim ? '<span class="tag tag-green">TRIM</span>' : ''}</td>
+      <td>${fmt(fat)}</td>
+      <td class="${temRet ? 'hl-purple' : ''}">${temRet ? fmt(fat_liq_m) : '—'}</td>
+      <td>${fmt(pis_pag)}</td><td>${fmt(cof_pag)}</td><td>${fmt(iss)}</td>
+      <td class="${irpjL > 0 ? 'hl-red' : ''}">${irpjL > 0 ? fmt(irpjL) : '—'}</td>
+      <td class="${adicL > 0 ? 'hl-amber' : ''}">${adicL > 0 ? fmt(adicL) : '—'}</td>
+      <td class="${csllL > 0 ? 'hl-red' : ''}">${csllL > 0 ? fmt(csllL) : '—'}</td>
+      <td class="${temRet ? 'hl-purple' : ''}">${temRet ? '(' + fmt(ret_total_m) + ')' : '—'}</td>
+      <td style="font-weight:800;">${fmt(total)}</td>
+    </tr>`;
+            }
+            tbody += `<tr class="tr-total">
+    <td>TOTAL ANUAL</td><td>${fmt(fat_a)}</td>
+    <td>${temRet ? fmt(fat_liq_a) : '—'}</td>
+    <td>${fmt(tPis)}</td><td>${fmt(tCof)}</td><td>${fmt(tIss)}</td>
+    <td>${fmt(tIrpj)}</td><td>${fmt(tAdic)}</td><td>${fmt(tCsll)}</td>
+    <td>(${fmt(tRet)})</td><td>${fmt(tPag)}</td>
+  </tr>`;
+            document.getElementById('tbody_mensal').innerHTML = tbody;
+
+            document.getElementById('tbody_prolabore').innerHTML = [
+                ['Pró-Labore Bruto', fmt(plab), 'var(--text)'],
+                ['(-) INSS Sócio 11%', '(' + fmt(inss_s) + ')', 'var(--red)'],
+                ['(-) INSS Pat. 20%', '(' + fmt(inss_p) + ')', 'var(--red)'],
+                ['Base Cálculo IR', fmt(base_ir), 'var(--text)'],
+                ['IR Progressivo', ir_pl > 0 ? '(' + fmt(ir_pl) + ')' : 'Isento', ir_pl > 0 ? 'var(--red)' : 'var(--green)'],
+                ['Custo Total / Mês', fmt(plab + inss_p), 'var(--amber)'],
+                ['Custo Total / Ano', fmt((plab + inss_p) * 12), 'var(--green-dark)'],
+            ].map(r => `<tr><td style="color:var(--muted);padding:5px 2px;font-size:11px;">${r[0]}</td>
+    <td style="text-align:right;padding:5px 2px;font-weight:700;font-size:11px;color:${r[2]};">${r[1]}</td></tr>`).join('');
+
+            const retRows = temRet ? [
+                ['Base (fat. bruto)', fmt(fat)],
+                ['IRRF ' + (aIRRF * 100).toFixed(2) + '%', fmt(ret_irrf)],
+                ['PIS retido ' + (aPisRet * 100).toFixed(2) + '%', fmt(ret_pis)],
+                ['COFINS retido ' + (aCofRet * 100).toFixed(2) + '%', fmt(ret_cof)],
+                ['CSLL retida ' + (aCsllRet * 100).toFixed(2) + '%', fmt(ret_csll)],
+                ['Total Retido / mês', fmt(ret_total_m)],
+                ['Total Retido / ano', fmt(t_ret)],
+                ['Fat. Líquido / mês', fmt(fat_liq_m)],
+                ['IRRF compensa IRPJ', 'Trim.: ' + fmt(irrf_trim)],
+            ] : [
+                ['Retenções', 'Não aplicável'],
+                ['Fat. Líquido', '= Fat. Bruto'],
+            ];
+            document.getElementById('tbody_retencoes').innerHTML = retRows.map(r =>
+                `<tr><td style="color:var(--muted);padding:5px 2px;font-size:11px;">${r[0]}</td>
+    <td style="text-align:right;padding:5px 2px;font-weight:700;font-size:11px;">${r[1]}</td></tr>`).join('');
+
+            document.getElementById('tbody_aliquotas').innerHTML = [
+                ['PIS', ext ? '—' : '0,65%'], ['COFINS', ext ? '—' : '3,00%'],
+                ['ISS', ext ? 'Imune' : pct(aISS * 100)],
+                ['Presunção IRPJ', pct(ppIRPJ * 100)],
+                ['IRPJ', '15%'], ['Adicional', '10% (>60k/trim)'],
+                ['Presunção CSLL', pct(ppCSLL * 100)],
+                ['CSLL', '9%'], ['INSS Sócio', '11%'], ['INSS Patronal', '20%'],
+            ].map(r => `<tr><td style="color:var(--muted);padding:4px 2px;font-size:11px;">${r[0]}</td>
+    <td style="text-align:right;padding:4px 2px;font-weight:800;font-size:11px;color:var(--green);">${r[1]}</td></tr>`).join('');
+
+            const allV = [t_pis, t_cof, t_iss, t_irpj, t_adic, t_csll];
+            const allN = ['PIS', 'COFINS', 'ISS', 'IRPJ', 'Adicional', 'CSLL'];
+            const allC = ['#1a6cb5', '#0ea5e9', '#03a437', '#c0392b', '#d98208', '#7b3fa0'];
+            const filt = allV.map((v, i) => ({ v, l: allN[i], c: allC[i] })).filter(x => x.v > 0);
+            if (chartPizza) chartPizza.destroy();
+            chartPizza = new Chart(document.getElementById('chartPizza'), {
+                type: 'doughnut',
+                data: { labels: filt.map(x => x.l), datasets: [{ data: filt.map(x => x.v), backgroundColor: filt.map(x => x.c), borderWidth: 2, borderColor: '#fff' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.body).getPropertyValue('--text').trim(), font: { size: 10 }, boxWidth: 10, padding: 8 } } } }
+            });
+
+            const barData = meses.map((_, i) => {
+                const isTrim = (i === 2 || i === 5 || i === 8 || i === 11);
+                return pis_pag + cof_pag + iss + (isTrim ? irpj_pag + csll_t : 0);
+            });
+            if (chartBarras) chartBarras.destroy();
+            chartBarras = new Chart(document.getElementById('chartBarras'), {
+                type: 'bar',
+                data: {
+                    labels: meses.map(m => m.substring(0, 3)),
+                    datasets: [{
+                        label: 'Impostos (R$)', data: barData,
+                        backgroundColor: barData.map((_, i) => (i === 2 || i === 5 || i === 8 || i === 11) ? '#c0392b' : '#03a437'),
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            ticks: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text').trim(),
+                                callback: v => 'R$' + (v / 1000).toFixed(0) + 'k', font: { size: 9 }
+                            },
+                            grid: { color: getComputedStyle(document.body).getPropertyValue('--border').trim() }
+                        },
+                        x: {
+                            ticks: { color: getComputedStyle(document.body).getPropertyValue('--text').trim(), font: { size: 9 }, maxRotation: 0 },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            const sn_aliq = fat <= 15000 ? 0.06 : fat <= 30000 ? 0.112 : 0.135;
+            const sn_imp = fat_a * sn_aliq;
+            const sn_lucro = fat_a - sn_imp - t_inss_p - t_plab;
+            const diff = t_imp - sn_imp;
+            document.getElementById('sc_lp_fat').textContent = fmt(fat_a);
+            document.getElementById('sc_lp_imp').textContent = fmt(t_imp);
+            document.getElementById('sc_lp_carga').textContent = pct(carga);
+            document.getElementById('sc_lp_lucro').textContent = fmt(lucro);
+            document.getElementById('sc_sn_fat').textContent = fmt(fat_a);
+            document.getElementById('sc_sn_imp').textContent = fmt(sn_imp);
+            document.getElementById('sc_sn_carga').textContent = pct((sn_imp / fat_a) * 100);
+            document.getElementById('sc_sn_lucro').textContent = fmt(sn_lucro);
+            document.getElementById('sc_diff').textContent = fmt(Math.abs(diff));
+            document.getElementById('sc_diff').style.color = diff > 0 ? '#a3f0bb' : '#ffb3ae';
+            document.getElementById('sc_eco_ano').textContent = diff > 0 ? fmt(diff) + '/ano' : 'LP vantajoso';
+            document.getElementById('sc_eco_mes').textContent = diff > 0 ? fmt(diff / 12) + '/mês' : '—';
+            document.getElementById('sc_indicado').textContent = diff > 0 ? '✅ Simples Nacional' : '✅ Lucro Presumido';
+
+            const resumo = [
+                { l: 'Faturamento Bruto', v: fmt(fat_a), c: '#1a6cb5', tag: '' },
+                { l: 'Fat. Líquido', v: temRet ? fmt(fat_liq_a) : '= Bruto', c: '#7b3fa0', tag: '' },
+                { l: 'Carga Tributária', v: pct(carga), c: carga > 15 ? 'var(--red)' : 'var(--green)', tag: carga > 15 ? 'alta' : 'ok' },
+                { l: 'Total Impostos', v: fmt(t_imp), c: 'var(--red)', tag: '' },
+                { l: 'Encargos INSS+PL', v: fmt(t_enc), c: 'var(--amber)', tag: '' },
+                { l: 'Custo Total', v: fmt(custo), c: 'var(--green-dark)', tag: '' },
+                { l: 'Lucro Líquido Est.', v: fmt(lucro), c: lucro > 0 ? 'var(--green)' : 'var(--red)', tag: '' },
+                { l: 'Margem Líquida', v: pct(margem), c: margem > 30 ? 'var(--green)' : 'var(--amber)', tag: '' },
+            ];
+            document.getElementById('resumo_grid').innerHTML = resumo.map(r =>
+                `<div style="background:linear-gradient(135deg, rgba(232,247,236,.95), rgba(255,255,255,.82));border-radius:12px;padding:12px;border-left:4px solid ${r.c};">
+      <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;">${r.l}</div>
+      <div style="font-size:15px;font-weight:800;color:${r.c};">${r.v}${r.tag ? ` <span class="tag tag-${r.tag === 'alta' ? 'red' : 'green'}">${r.tag.toUpperCase()}</span>` : ''}</div>
+    </div>`
+            ).join('');
+        }
+
+        window.onload = () => { atualizarPresuncao(); };
+    </script>
+</body>
+
+</html>

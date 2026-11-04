@@ -1,0 +1,6 @@
+Options -Indexes
+
+<FilesMatch "^(?!gerar-pdf-clt\.php$).*">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>

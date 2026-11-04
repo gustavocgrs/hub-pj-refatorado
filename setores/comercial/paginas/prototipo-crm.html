@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-base="../../..">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM MVP | Hub PJ</title>
+    <meta
+      name="description"
+      content="MVP de CRM com pipeline, cards de clientes, tags, automações e ações de contato para o Hub PJ."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+<style>
+:root {
+  --bg: #f7fbf8;
+  --surface: rgba(255, 255, 255, 0.74);
+  --surface-strong: rgba(255, 255, 255, 0.9);
+  --surface-soft: rgba(255, 255, 255, 0.6);
+  --border: rgba(19, 171, 37, 0.12);
+  --border-strong: rgba(19, 171, 37, 0.24);
+  --text: #11342a;
+  --muted: #5f776f;
+  --green-start: #13ab25;
+  --green-end: #003d32;
+  --green-soft: #e6f7eb;
+  --green-soft-strong: #d3f0db;
+  --red: #cf4a3b;
+  --amber: #dd8d13;
+  --blue: #1a6cb5;
+  --purple: #7c46a8;
+  --shadow: 0 24px 60px rgba(0, 61, 50, 0.12);
+  --shadow-hover: 0 28px 70px rgba(0, 61, 50, 0.18);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 18px;
+  --radius-sm: 14px;
+  --max-width: 1440px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(19, 171, 37, 0.1), transparent 32%),
+    radial-gradient(circle at 85% 12%, rgba(0, 61, 50, 0.1), transparent 24%),
+    linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page-shell {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  padding: 32px 20px 48px;
+}
+
+.ambient {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  filter: blur(28px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ambient-left {
+  top: 80px;
+  left: -140px;
+  background: radial-gradient(circle, rgba(19, 171, 37, 0.28), transparent 68%);
+}
+
+.ambient-right {
+  top: 240px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(0, 61, 50, 0.2), transparent 70%);
+}
+
+.hero,
+.app-container {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--max-width));
+  margin: 0 auto;
+}
+
+.glass-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.56)),
+    linear-gradient(135deg, rgba(19, 171, 37, 0.08), rgba(0, 61, 50, 0.08));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.65fr 0.95fr;
+  gap: 24px;
+  padding: 32px;
+  border-radius: var(--radius-xl);
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--green-end);
+  background: rgba(19, 171, 37, 0.08);
+  border: 1px solid rgba(19, 171, 37, 0.12);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.eyebrow-small {
+  font-size: 0.72rem;
+  padding: 7px 12px;
+}
+
+.hero h1 {
+  margin: 16px 0 14px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.05;
+  max-width: 14ch;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 58ch;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.hero-meta {
+  display: grid;
+  gap: 14px;
+}
+
+.meta-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.55)),
+    linear-gradient(135deg, rgba(19, 171, 37, 0.12), rgba(0, 61, 50, 0.14));
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.meta-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -40px -50px auto;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(19, 171, 37, 0.18), transparent 65%);
+}
+
+.meta-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.meta-card span {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.app-container {
+  display: grid;
+  gap: 18px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 320px;
+  gap: 18px;
+  align-items: start;
+}
+
+.main-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.stat-card,
+.panel-card,
+.pipeline-column,
+.client-card,
+.empty-state,
+.automation-list li,
+.timeline-item,
+.template-card {
+  border-radius: var(--radius-lg);
+}
+
+.stat-card,
+.panel-card,
+.pipeline-column,
+.client-card,
+.empty-state,
+.template-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.58)),
+    linear-gradient(135deg, rgba(19, 171, 37, 0.08), rgba(0, 61, 50, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.stat-card {
+  padding: 20px;
+  min-height: 150px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.stat-label {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(19, 171, 37, 0.08);
+  color: var(--green-end);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-value {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1;
+  font-weight: 800;
+}
+
+.stat-description {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+
+.panel-card {
+  padding: 20px;
+}
+
+.panel-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.panel-title-row h2,
+.panel-title-row h3,
+.panel-title-row h4 {
+  margin: 0;
+}
+
+.panel-title-row p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field-inline,
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field span,
+.field-inline span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field textarea,
+.field select,
+.field-inline input,
+.field-inline select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.86);
+  padding: 12px 14px;
+  outline: none;
+  color: var(--text);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.field-inline input:focus,
+.field-inline select:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px rgba(19, 171, 37, 0.12);
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.primary-btn,
+.ghost-btn,
+.mini-btn,
+.quick-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease, background 180ms ease;
+}
+
+.primary-btn {
+  padding: 12px 18px;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--green-start), var(--green-end));
+  box-shadow: 0 14px 28px rgba(0, 61, 50, 0.2);
+  font-weight: 700;
+}
+
+.ghost-btn {
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.mini-btn,
+.quick-action {
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  background: rgba(19, 171, 37, 0.08);
+  color: var(--green-end);
+  font-weight: 700;
+}
+
+.primary-btn:hover,
+.ghost-btn:hover,
+.mini-btn:hover,
+.quick-action:hover,
+.client-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.ghost-btn:hover,
+.mini-btn:hover,
+.quick-action:hover {
+  background: rgba(19, 171, 37, 0.12);
+}
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(260px, 1fr));
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.pipeline-column {
+  padding: 16px;
+  min-height: 560px;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 14px;
+}
+
+.column-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.column-title {
+  display: grid;
+  gap: 4px;
+}
+
+.column-title strong {
+  font-size: 1rem;
+}
+
+.column-title span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.column-count {
+  min-width: 36px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(19, 171, 37, 0.1);
+  color: var(--green-end);
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.column-value {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border);
+}
+
+.column-value span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.column-value strong {
+  font-size: 1rem;
+}
+
+.cards-stack {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.client-card {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.client-card.selected {
+  outline: 2px solid rgba(19, 171, 37, 0.2);
+}
+
+.client-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.client-card h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.client-card-subtitle,
+.client-card-meta,
+.client-card-notes,
+.sidebar-subtext,
+.empty-state p,
+.timeline-content p,
+.automation-list small {
+  color: var(--muted);
+}
+
+.client-card-subtitle,
+.client-card-meta,
+.client-card-notes {
+  line-height: 1.55;
+}
+
+.priority-badge,
+.tag-chip,
+.automation-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.priority-high {
+  background: rgba(207, 74, 59, 0.12);
+  color: var(--red);
+}
+
+.priority-medium {
+  background: rgba(221, 141, 19, 0.12);
+  color: var(--amber);
+}
+
+.priority-low {
+  background: rgba(19, 171, 37, 0.12);
+  color: var(--green-end);
+}
+
+.tags-row,
+.card-actions,
+.template-actions,
+.sidebar-tags,
+.automation-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-chip {
+  background: rgba(19, 171, 37, 0.08);
+  color: var(--green-end);
+  border: 1px solid rgba(19, 171, 37, 0.12);
+  text-transform: none;
+  font-size: 0.78rem;
+}
+
+.client-card-notes {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.sidebar {
+  display: grid;
+  gap: 18px;
+}
+
+.detail-card {
+  display: grid;
+  gap: 18px;
+}
+
+.sidebar-header {
+  display: grid;
+  gap: 10px;
+}
+
+.sidebar-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.sidebar-title-row h3 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+}
+
+.sidebar-section {
+  display: grid;
+  gap: 10px;
+}
+
+.sidebar-section h4,
+.template-card h4 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.info-list {
+  display: grid;
+  gap: 10px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.info-item span {
+  color: var(--muted);
+}
+
+.info-item strong {
+  text-align: right;
+}
+
+.timeline {
+  display: grid;
+  gap: 12px;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-top: 5px;
+  background: linear-gradient(135deg, var(--green-start), var(--green-end));
+  box-shadow: 0 0 0 4px rgba(19, 171, 37, 0.1);
+}
+
+.timeline-content strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.timeline-content p {
+  margin: 0 0 4px;
+  line-height: 1.5;
+}
+
+.timeline-content time {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.template-card {
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.template-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.automation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.automation-list li {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(19, 171, 37, 0.08);
+  border: 1px solid rgba(19, 171, 37, 0.12);
+}
+
+.automation-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.automation-row strong {
+  font-size: 0.98rem;
+}
+
+.automation-badge {
+  background: rgba(19, 171, 37, 0.12);
+  color: var(--green-end);
+}
+
+.empty-state {
+  padding: 24px;
+  text-align: center;
+}
+
+.empty-state strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(6, 20, 15, 0.42);
+  z-index: 50;
+}
+
+.modal.is-open {
+  display: flex;
+}
+
+.modal-dialog {
+  width: min(100%, 760px);
+  max-height: min(90vh, 860px);
+  overflow: auto;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  margin: 8px 0 0;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .template-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .hero,
+  .filters-grid,
+  .template-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    max-width: 100%;
+  }
+
+  .kanban-board {
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .page-shell {
+    padding: 18px 14px 36px;
+  }
+
+  .hero,
+  .panel-card,
+  .pipeline-column,
+  .template-card,
+  .modal-dialog {
+    padding: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-title-row,
+  .sidebar-title-row,
+  .automation-row,
+  .column-top,
+  .column-value,
+  .client-card-head {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+}
+</style>
+
+  <body>
+  <style>.page-shell{opacity:0;transition:opacity .3s ease}.page-shell.ready{opacity:1}</style>
+  <script>
+    (function(){var b=document.documentElement.dataset.base||".";fetch(b+"/api/auth/check-session.php").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(!d.logado){window.location.href=b+"/login.html";return}var s=document.querySelector(".page-shell");if(s)s.classList.add("ready")}).catch(function(){window.location.href=(document.documentElement.dataset.base||".")+"/login.html"})})();
+  </script>
+    <div class="page-shell">
+      <div class="ambient ambient-left"></div>
+      <div class="ambient ambient-right"></div>
+
+      <header class="hero glass-panel">
+        <div class="hero-copy">
+          <span class="eyebrow">CRM MVP Hub PJ</span>
+          <h1>Pipeline, clientes, tags e automações em uma base pronta para evoluir.</h1>
+          <p>
+            MVP visual para organizar atendimento, comercial e relacionamento com cards
+            de clientes, etapas do funil, histórico, ações de WhatsApp, e-mail e regras
+            automáticas de tags.
+          </p>
+
+          <div class="hero-actions">
+            <button id="addClientBtn" class="primary-btn" type="button">+ Novo cliente</button>
+            <button id="resetDemoBtn" class="ghost-btn" type="button">Restaurar demo</button>
+          </div>
+        </div>
+
+        <div class="hero-meta">
+          <div class="meta-card">
+            <strong id="heroTotalClients">0 clientes</strong>
+            <span>Base ativa com cards e histórico operacional</span>
+          </div>
+          <div class="meta-card">
+            <strong id="heroAutomationCount">0 automações</strong>
+            <span>Regras locais para etapas, tags e follow-up</span>
+          </div>
+        </div>
+      </header>
+
+      <main id="app" class="app-container"></main>
+    </div>
+
+    <div id="clientModal" class="modal" aria-hidden="true">
+      <div class="modal-dialog glass-panel">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow eyebrow-small">Novo cliente</span>
+            <h2>Criar card no CRM</h2>
+          </div>
+          <button id="closeModalBtn" class="icon-btn" type="button" aria-label="Fechar">×</button>
+        </div>
+
+        <form id="clientForm" class="form-grid">
+          <label class="field">
+            <span>Nome do contato</span>
+            <input id="clientName" name="clientName" type="text" placeholder="Ex.: Amanda Ribeiro" required />
+          </label>
+
+          <label class="field">
+            <span>Empresa</span>
+            <input id="clientCompany" name="clientCompany" type="text" placeholder="Ex.: Clínica Aurora" required />
+          </label>
+
+          <label class="field">
+            <span>WhatsApp</span>
+            <input id="clientWhatsapp" name="clientWhatsapp" type="tel" placeholder="5511999999999" required />
+          </label>
+
+          <label class="field">
+            <span>E-mail</span>
+            <input id="clientEmail" name="clientEmail" type="email" placeholder="contato@empresa.com" required />
+          </label>
+
+          <label class="field">
+            <span>Etapa inicial</span>
+            <select id="clientStage" name="clientStage"></select>
+          </label>
+
+          <label class="field">
+            <span>Tags iniciais</span>
+            <input id="clientTags" name="clientTags" type="text" placeholder="lead quente, indicação" />
+          </label>
+
+          <label class="field field-full">
+            <span>Observação</span>
+            <textarea id="clientNotes" name="clientNotes" rows="4" placeholder="Contexto comercial, dores do cliente, próximos passos..."></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button class="ghost-btn" id="cancelModalBtn" type="button">Cancelar</button>
+            <button class="primary-btn" type="submit">Criar cliente</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+
+
+<script>
+
+const CRM_STORAGE_KEY = "hub-pj-crm-mvp-v1";
+
+const STAGES = [
+  { id: "novo-lead", name: "Novo Lead", hint: "Entrada e qualificação inicial" },
+  { id: "qualificacao", name: "Qualificação", hint: "Descoberta e diagnóstico" },
+  { id: "proposta", name: "Proposta Enviada", hint: "Negociação e retorno" },
+  { id: "fechado", name: "Fechado", hint: "Cliente convertido" },
+];
+
+const AUTOMATIONS = [
+  {
+    id: "auto-proposta",
+    title: "Tag automática de proposta",
+    description: "Ao mover o cliente para Proposta Enviada, aplicamos a tag “proposta enviada”.",
+    badge: "Etapa",
+  },
+  {
+    id: "auto-fechado",
+    title: "Conversão em cliente",
+    description: "Quando um card chega em Fechado, adicionamos a tag “cliente ativo” e registramos histórico.",
+    badge: "Conversão",
+  },
+  {
+    id: "auto-followup",
+    title: "Cobrança de follow-up",
+    description: "Se o próximo contato já venceu, aplicamos a tag “follow-up urgente”.",
+    badge: "Tempo",
+  },
+  {
+    id: "auto-onboarding",
+    title: "Boas-vindas operacionais",
+    description: "Clientes fechados recebem modelo pronto de WhatsApp e e-mail de onboarding.",
+    badge: "Mensagem",
+  },
+];
+
+const MESSAGE_TEMPLATES = [
+  {
+    id: "tmpl-followup",
+    title: "Follow-up comercial",
+    description: "Mensagem curta para retomar contato com lead em negociação.",
+    channel: "WhatsApp",
+    body: "Olá, {{nome}}! Passando para retomar nossa conversa sobre a solução da PJ Contrato. Posso te atualizar com os próximos passos?",
+  },
+  {
+    id: "tmpl-documentos",
+    title: "Solicitação de documentos",
+    description: "Modelo de solicitação para onboarding e fechamento contratual.",
+    channel: "E-mail",
+    body: "Olá, {{nome}}! Para avançarmos com a implantação, preciso dos documentos combinados. Se preferir, posso te reenviar a lista completa.",
+  },
+  {
+    id: "tmpl-boasvindas",
+    title: "Boas-vindas ao cliente",
+    description: "Mensagem de início de operação após fechamento.",
+    channel: "WhatsApp",
+    body: "Olá, {{nome}}! Seja bem-vindo(a) à PJ Contrato. Seu processo foi iniciado e vamos te acompanhar nas próximas etapas.",
+  },
+];
+
+function isoDateFromOffset(daysFromNow) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromNow);
+  return date.toISOString().slice(0, 10);
+}
+
+function createHistoryEntry(type, message, when = new Date().toISOString()) {
+  return { id: uid(), type, message, when };
+}
+
+function uid() {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+  return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function seedData() {
+  return {
+    clients: [
+      {
+        id: uid(),
+        name: "Amanda Ribeiro",
+        company: "Clínica Aurora",
+        whatsapp: "5511999987001",
+        email: "amanda@clinicaaurora.com.br",
+        stageId: "qualificacao",
+        owner: "Tarcísio",
+        priority: "high",
+        value: 3200,
+        tags: ["lead quente", "indicação", "follow-up urgente"],
+        nextContactAt: isoDateFromOffset(-1),
+        lastContactAt: isoDateFromOffset(-2),
+        notes: "Interessada em abrir fluxo de atendimento contábil e fiscal. Quer proposta com onboarding rápido.",
+        automations: ["auto-followup"],
+        history: [
+          createHistoryEntry("lead", "Lead criado via indicação do parceiro André.", new Date(Date.now() - 86400000 * 4).toISOString()),
+          createHistoryEntry("whatsapp", "Mensagem enviada com apresentação inicial.", new Date(Date.now() - 86400000 * 3).toISOString()),
+          createHistoryEntry("call", "Reunião de diagnóstico realizada.", new Date(Date.now() - 86400000 * 2).toISOString()),
+        ],
+      },
+      {
+        id: uid(),
+        name: "Bruno Teles",
+        company: "BT Engenharia",
+        whatsapp: "5512988877002",
+        email: "bruno@btengenharia.com",
+        stageId: "proposta",
+        owner: "Equipe Comercial",
+        priority: "medium",
+        value: 4800,
+        tags: ["proposta enviada", "simples nacional"],
+        nextContactAt: isoDateFromOffset(1),
+        lastContactAt: isoDateFromOffset(-1),
+        notes: "Precisa de migração de regime tributário e alinhamento de pró-labore.",
+        automations: ["auto-proposta"],
+        history: [
+          createHistoryEntry("email", "Proposta enviada por e-mail.", new Date(Date.now() - 86400000).toISOString()),
+          createHistoryEntry("automation", "Tag proposta enviada aplicada automaticamente.", new Date(Date.now() - 86400000).toISOString()),
+        ],
+      },
+      {
+        id: uid(),
+        name: "Carla Menezes",
+        company: "CM Studio",
+        whatsapp: "5511977766003",
+        email: "carla@cmstudio.com.br",
+        stageId: "novo-lead",
+        owner: "Inbound",
+        priority: "low",
+        value: 1800,
+        tags: ["inbound", "marketing"],
+        nextContactAt: isoDateFromOffset(2),
+        lastContactAt: isoDateFromOffset(0),
+        notes: "Lead vindo do formulário do site. Interessada em entender abertura PJ.",
+        automations: [],
+        history: [createHistoryEntry("lead", "Lead capturado no formulário do Hub PJ.", new Date().toISOString())],
+      },
+      {
+        id: uid(),
+        name: "Diego Santos",
+        company: "DS Imports",
+        whatsapp: "5511955544004",
+        email: "diego@dsimports.com",
+        stageId: "fechado",
+        owner: "CS",
+        priority: "high",
+        value: 6500,
+        tags: ["cliente ativo", "onboarding", "premium"],
+        nextContactAt: isoDateFromOffset(3),
+        lastContactAt: isoDateFromOffset(0),
+        notes: "Contrato fechado ontem. Aguardando checklist de documentos para onboarding.",
+        automations: ["auto-fechado", "auto-onboarding"],
+        history: [
+          createHistoryEntry("deal", "Contrato fechado com plano premium.", new Date(Date.now() - 3600000 * 12).toISOString()),
+          createHistoryEntry("automation", "Tag cliente ativo aplicada automaticamente.", new Date(Date.now() - 3600000 * 12).toISOString()),
+          createHistoryEntry("whatsapp", "Mensagem de boas-vindas enviada.", new Date(Date.now() - 3600000 * 10).toISOString()),
+        ],
+      },
+    ],
+  };
+}
+
+const state = {
+  data: loadData(),
+  filters: { search: "", stageId: "all", tag: "all", priority: "all" },
+  selectedClientId: null,
+};
+
+if (!state.selectedClientId && state.data.clients.length) {
+  state.selectedClientId = state.data.clients[0].id;
+}
+
+const app = document.querySelector("#app");
+const addClientBtn = document.querySelector("#addClientBtn");
+const resetDemoBtn = document.querySelector("#resetDemoBtn");
+const clientModal = document.querySelector("#clientModal");
+const clientForm = document.querySelector("#clientForm");
+const closeModalBtn = document.querySelector("#closeModalBtn");
+const cancelModalBtn = document.querySelector("#cancelModalBtn");
+const stageSelect = document.querySelector("#clientStage");
+
+function loadData() {
+  try {
+    const stored = localStorage.getItem(CRM_STORAGE_KEY);
+    if (!stored) return seedData();
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed.clients)) return seedData();
+    return parsed;
+  } catch {
+    return seedData();
+  }
+}
+
+function saveData() {
+  localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(state.data));
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(value || 0);
+}
+
+function formatDate(value) {
+  if (!value) return "Sem data";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+function formatDateTime(value) {
+  if (!value) return "Sem registro";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function getStageMeta(stageId) {
+  return STAGES.find((stage) => stage.id === stageId) || STAGES[0];
+}
+
+function getPriorityLabel(priority) {
+  return { high: "Alta", medium: "Média", low: "Baixa" }[priority] || "Baixa";
+}
+
+function daysUntil(dateString) {
+  if (!dateString) return null;
+  const target = new Date(dateString);
+  const today = new Date();
+  target.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  return Math.round((target - today) / 86400000);
+}
+
+function normalizeTag(tag) {
+  return tag.trim().toLowerCase();
+}
+
+function prettifyTag(tag) {
+  return tag
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function upsertTag(client, tag) {
+  const normalized = normalizeTag(tag);
+  if (!normalized) return;
+  if (!client.tags.some((item) => normalizeTag(item) === normalized)) {
+    client.tags.push(prettifyTag(normalized));
+  }
+}
+
+function removeTag(client, tag) {
+  const normalized = normalizeTag(tag);
+  client.tags = client.tags.filter((item) => normalizeTag(item) !== normalized);
+}
+
+function applyAutomations(client) {
+  client.automations = [];
+
+  if (client.stageId === "proposta") {
+    upsertTag(client, "proposta enviada");
+    client.automations.push("auto-proposta");
+  } else {
+    removeTag(client, "proposta enviada");
+  }
+
+  if (client.stageId === "fechado") {
+    upsertTag(client, "cliente ativo");
+    upsertTag(client, "onboarding");
+    client.automations.push("auto-fechado", "auto-onboarding");
+  }
+
+  const days = daysUntil(client.nextContactAt);
+  if (days !== null && days < 0) {
+    upsertTag(client, "follow-up urgente");
+    if (!client.automations.includes("auto-followup")) client.automations.push("auto-followup");
+  } else {
+    removeTag(client, "follow-up urgente");
+  }
+}
+
+function applyAutomationsToAll() {
+  state.data.clients.forEach(applyAutomations);
+}
+
+function getAllTags() {
+  const set = new Set();
+  state.data.clients.forEach((client) => {
+    client.tags.forEach((tag) => set.add(prettifyTag(normalizeTag(tag))));
+  });
+  return [...set].sort((a, b) => a.localeCompare(b, "pt-BR"));
+}
+
+function getFilteredClients() {
+  return state.data.clients.filter((client) => {
+    const searchBlob = `${client.name} ${client.company} ${client.email} ${client.tags.join(" ")} ${client.notes}`.toLowerCase();
+    const matchesSearch = searchBlob.includes(state.filters.search.toLowerCase());
+    const matchesStage = state.filters.stageId === "all" || client.stageId === state.filters.stageId;
+    const matchesTag =
+      state.filters.tag === "all" ||
+      client.tags.some((tag) => normalizeTag(tag) === normalizeTag(state.filters.tag));
+    const matchesPriority = state.filters.priority === "all" || client.priority === state.filters.priority;
+    return matchesSearch && matchesStage && matchesTag && matchesPriority;
+  });
+}
+
+function getSelectedClient() {
+  return state.data.clients.find((client) => client.id === state.selectedClientId) || null;
+}
+
+function updateHeroNumbers() {
+  const totalClients = state.data.clients.length;
+  const activeAutomations = new Set(state.data.clients.flatMap((client) => client.automations)).size;
+  document.querySelector("#heroTotalClients").textContent = `${totalClients} clientes`;
+  document.querySelector("#heroAutomationCount").textContent = `${activeAutomations} automações`;
+}
+
+function renderStats(filteredClients) {
+  const totalPipelineValue = filteredClients.reduce((sum, client) => sum + (client.value || 0), 0);
+  const dueFollowUps = filteredClients.filter((client) => {
+    const diff = daysUntil(client.nextContactAt);
+    return diff !== null && diff <= 0;
+  }).length;
+  const convertedClients = filteredClients.filter((client) => client.stageId === "fechado").length;
+  const proposalClients = filteredClients.filter((client) => client.stageId === "proposta").length;
+
+  return `
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-label">Base ativa</span>
+        <div class="stat-value">${filteredClients.length}</div>
+        <div class="stat-description">Clientes e leads visíveis com os filtros atuais.</div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Pipeline</span>
+        <div class="stat-value">${formatCurrency(totalPipelineValue)}</div>
+        <div class="stat-description">Valor estimado da carteira somada do CRM.</div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Follow-up</span>
+        <div class="stat-value">${dueFollowUps}</div>
+        <div class="stat-description">Cards vencidos ou com contato previsto para hoje.</div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Conversão</span>
+        <div class="stat-value">${convertedClients}/${proposalClients + convertedClients}</div>
+        <div class="stat-description">Fechados versus clientes em proposta ou fechamento.</div>
+      </article>
+    </section>
+  `;
+}
+
+function renderFilters() {
+  const tags = getAllTags();
+  return `
+    <section class="panel-card">
+      <div class="panel-title-row">
+        <div>
+          <h2>Pipeline operacional</h2>
+          <p>Filtre a base, acompanhe cards e mova clientes entre etapas.</p>
+        </div>
+        <div class="actions-row">
+          <button class="mini-btn" type="button" data-action="clear-filters">Limpar filtros</button>
+        </div>
+      </div>
+      <div class="filters-grid">
+        <label class="field-inline">
+          <span>Buscar</span>
+          <input id="searchInput" type="search" placeholder="Nome, empresa, tag, nota..." value="${escapeHtml(state.filters.search)}" />
+        </label>
+        <label class="field-inline">
+          <span>Etapa</span>
+          <select id="stageFilter">
+            <option value="all">Todas</option>
+            ${STAGES.map((stage) => `<option value="${stage.id}" ${stage.id === state.filters.stageId ? "selected" : ""}>${stage.name}</option>`).join("")}
+          </select>
+        </label>
+        <label class="field-inline">
+          <span>Tag</span>
+          <select id="tagFilter">
+            <option value="all">Todas</option>
+            ${tags.map((tag) => `<option value="${escapeHtml(tag)}" ${tag === state.filters.tag ? "selected" : ""}>${tag}</option>`).join("")}
+          </select>
+        </label>
+        <label class="field-inline">
+          <span>Prioridade</span>
+          <select id="priorityFilter">
+            <option value="all">Todas</option>
+            <option value="high" ${state.filters.priority === "high" ? "selected" : ""}>Alta</option>
+            <option value="medium" ${state.filters.priority === "medium" ? "selected" : ""}>Média</option>
+            <option value="low" ${state.filters.priority === "low" ? "selected" : ""}>Baixa</option>
+          </select>
+        </label>
+      </div>
+    </section>
+  `;
+}
+
+function renderKanban(filteredClients) {
+  return `
+    <section class="kanban-board">
+      ${STAGES.map((stage) => {
+        const stageClients = filteredClients.filter((client) => client.stageId === stage.id);
+        const totalValue = stageClients.reduce((sum, client) => sum + client.value, 0);
+        return `
+          <article class="pipeline-column">
+            <div class="column-top">
+              <div class="column-title">
+                <strong>${stage.name}</strong>
+                <span>${stage.hint}</span>
+              </div>
+              <span class="column-count">${stageClients.length}</span>
+            </div>
+            <div class="column-value">
+              <span>Valor em carteira</span>
+              <strong>${formatCurrency(totalValue)}</strong>
+            </div>
+            <div class="cards-stack">
+              ${
+                stageClients.length
+                  ? stageClients.map(renderClientCard).join("")
+                  : `<div class="empty-state"><strong>Sem cards nesta etapa</strong><p>Quando houver clientes aqui, eles aparecem nessa coluna.</p></div>`
+              }
+            </div>
+          </article>
+        `;
+      }).join("")}
+    </section>
+  `;
+}
+
+function renderClientCard(client) {
+  const nextStage = STAGES[STAGES.findIndex((stage) => stage.id === client.stageId) + 1] || null;
+  const nextContactDiff = daysUntil(client.nextContactAt);
+  const nextContactLabel =
+    nextContactDiff === null
+      ? "Sem follow-up"
+      : nextContactDiff < 0
+        ? `Atrasado há ${Math.abs(nextContactDiff)} dia(s)`
+        : nextContactDiff === 0
+          ? "Contato hoje"
+          : `Próximo contato em ${nextContactDiff} dia(s)`;
+
+  return `
+    <article class="client-card ${client.id === state.selectedClientId ? "selected" : ""}" data-client-id="${client.id}">
+      <div class="client-card-head">
+        <div>
+          <h4>${escapeHtml(client.name)}</h4>
+          <div class="client-card-subtitle">${escapeHtml(client.company)}</div>
+        </div>
+        <span class="priority-badge priority-${client.priority}">${getPriorityLabel(client.priority)}</span>
+      </div>
+      <div class="client-card-meta">
+        <strong>${formatCurrency(client.value)}</strong> em potencial
+        <br />
+        Próximo passo: ${nextContactLabel}
+      </div>
+      <div class="tags-row">
+        ${client.tags.slice(0, 3).map((tag) => `<span class="tag-chip">${escapeHtml(tag)}</span>`).join("")}
+        ${client.tags.length > 3 ? `<span class="tag-chip">+${client.tags.length - 3}</span>` : ""}
+      </div>
+      <p class="client-card-notes">${escapeHtml(client.notes.slice(0, 120))}${client.notes.length > 120 ? "..." : ""}</p>
+      <div class="card-actions">
+        <button class="mini-btn" type="button" data-action="select-client" data-client-id="${client.id}">Detalhes</button>
+        <button class="mini-btn" type="button" data-action="send-whatsapp" data-client-id="${client.id}">WhatsApp</button>
+        <button class="mini-btn" type="button" data-action="send-email" data-client-id="${client.id}">E-mail</button>
+        ${
+          nextStage
+            ? `<button class="mini-btn" type="button" data-action="advance-stage" data-client-id="${client.id}">Mover para ${nextStage.name}</button>`
+            : `<button class="mini-btn" type="button" data-action="add-history" data-client-id="${client.id}">Registrar contato</button>`
+        }
+      </div>
+    </article>
+  `;
+}
+
+function renderSidebar(selectedClient) {
+  if (!selectedClient) {
+    return `
+      <aside class="sidebar">
+        <section class="panel-card empty-state">
+          <strong>Selecione um cliente</strong>
+          <p>Clique em qualquer card do kanban para ver detalhes, histórico e ações rápidas.</p>
+        </section>
+      </aside>
+    `;
+  }
+
+  const stage = getStageMeta(selectedClient.stageId);
+  const templateCards = MESSAGE_TEMPLATES.map((template) => `
+    <article class="template-card">
+      <div class="panel-title-row">
+        <div>
+          <h4>${template.title}</h4>
+          <p>${template.description}</p>
+        </div>
+        <span class="tag-chip">${template.channel}</span>
+      </div>
+      <p>${escapeHtml(interpolateTemplate(template.body, selectedClient))}</p>
+      <div class="template-actions">
+        <button class="quick-action" type="button" data-action="use-template" data-template-id="${template.id}" data-client-id="${selectedClient.id}">Usar template</button>
+      </div>
+    </article>
+  `).join("");
+
+  return `
+    <aside class="sidebar">
+      <section class="panel-card detail-card">
+        <div class="sidebar-header">
+          <div class="sidebar-title-row">
+            <div>
+              <h3>${escapeHtml(selectedClient.name)}</h3>
+              <div class="sidebar-subtext">${escapeHtml(selectedClient.company)}</div>
+            </div>
+            <span class="priority-badge priority-${selectedClient.priority}">${getPriorityLabel(selectedClient.priority)}</span>
+          </div>
+          <div class="sidebar-tags">
+            <span class="tag-chip">${stage.name}</span>
+            ${selectedClient.tags.map((tag) => `<span class="tag-chip">${escapeHtml(tag)}</span>`).join("")}
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4>Resumo do card</h4>
+          <div class="info-list">
+            <div class="info-item"><span>Valor estimado</span><strong>${formatCurrency(selectedClient.value)}</strong></div>
+            <div class="info-item"><span>Próximo contato</span><strong>${formatDate(selectedClient.nextContactAt)}</strong></div>
+            <div class="info-item"><span>Último contato</span><strong>${formatDate(selectedClient.lastContactAt)}</strong></div>
+            <div class="info-item"><span>Responsável</span><strong>${escapeHtml(selectedClient.owner)}</strong></div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4>Canais</h4>
+          <div class="info-list">
+            <div class="info-item"><span>WhatsApp</span><strong>${escapeHtml(selectedClient.whatsapp)}</strong></div>
+            <div class="info-item"><span>E-mail</span><strong>${escapeHtml(selectedClient.email)}</strong></div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4>Observações</h4>
+          <p class="client-card-notes">${escapeHtml(selectedClient.notes)}</p>
+        </div>
+
+        <div class="sidebar-section">
+          <h4>Ações rápidas</h4>
+          <div class="template-actions">
+            <button class="quick-action" type="button" data-action="send-whatsapp" data-client-id="${selectedClient.id}">Enviar WhatsApp</button>
+            <button class="quick-action" type="button" data-action="send-email" data-client-id="${selectedClient.id}">Enviar e-mail</button>
+            <button class="quick-action" type="button" data-action="advance-stage" data-client-id="${selectedClient.id}">Avançar etapa</button>
+            <button class="quick-action" type="button" data-action="add-tag" data-client-id="${selectedClient.id}">Adicionar tag</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <div class="panel-title-row">
+          <div>
+            <h3>Histórico</h3>
+            <p>Linha do tempo com contatos e automações aplicadas.</p>
+          </div>
+        </div>
+        <div class="timeline">
+          ${selectedClient.history.slice().reverse().map((entry) => `
+            <article class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div class="timeline-content">
+                <strong>${escapeHtml(entry.message)}</strong>
+                <p>${escapeHtml(getHistoryLabel(entry.type))}</p>
+                <time>${formatDateTime(entry.when)}</time>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <div class="panel-title-row">
+          <div>
+            <h3>Templates prontos</h3>
+            <p>Disparo rápido para WhatsApp ou e-mail com dados do cliente.</p>
+          </div>
+        </div>
+        <div class="template-grid">
+          ${templateCards}
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <div class="panel-title-row">
+          <div>
+            <h3>Automações do MVP</h3>
+            <p>Regras locais já ativas para demonstrar a operação do CRM.</p>
+          </div>
+        </div>
+        <ul class="automation-list">
+          ${AUTOMATIONS.map((automation) => `
+            <li>
+              <div class="automation-row">
+                <strong>${automation.title}</strong>
+                <span class="automation-badge">${automation.badge}</span>
+              </div>
+              <small>${automation.description}</small>
+            </li>
+          `).join("")}
+        </ul>
+      </section>
+    </aside>
+  `;
+}
+
+function renderApp() {
+  applyAutomationsToAll();
+  saveData();
+  updateHeroNumbers();
+
+  const filteredClients = getFilteredClients();
+  const selectedClient = getSelectedClient();
+
+  app.innerHTML = `
+    <div class="dashboard-grid">
+      <div class="main-stack">
+        ${renderStats(filteredClients)}
+        ${renderFilters()}
+        ${renderKanban(filteredClients)}
+      </div>
+      ${renderSidebar(selectedClient)}
+    </div>
+  `;
+
+  attachAppEvents();
+}
+
+function attachAppEvents() {
+  document.querySelector("#searchInput")?.addEventListener("input", (event) => {
+    state.filters.search = event.target.value;
+    renderApp();
+  });
+
+  document.querySelector("#stageFilter")?.addEventListener("change", (event) => {
+    state.filters.stageId = event.target.value;
+    renderApp();
+  });
+
+  document.querySelector("#tagFilter")?.addEventListener("change", (event) => {
+    state.filters.tag = event.target.value;
+    renderApp();
+  });
+
+  document.querySelector("#priorityFilter")?.addEventListener("change", (event) => {
+    state.filters.priority = event.target.value;
+    renderApp();
+  });
+
+  app.querySelectorAll("[data-action]").forEach((element) => {
+    element.addEventListener("click", handleActionClick);
+  });
+
+  app.querySelectorAll("[data-client-id]").forEach((card) => {
+    if (card.dataset.action) return;
+    card.addEventListener("click", () => {
+      state.selectedClientId = card.dataset.clientId;
+      renderApp();
+    });
+  });
+}
+
+function handleActionClick(event) {
+  const trigger = event.currentTarget;
+  const action = trigger.dataset.action;
+  const clientId = trigger.dataset.clientId;
+  const templateId = trigger.dataset.templateId;
+
+  if (action === "clear-filters") {
+    state.filters = { search: "", stageId: "all", tag: "all", priority: "all" };
+    renderApp();
+    return;
+  }
+  if (action === "select-client") {
+    state.selectedClientId = clientId;
+    renderApp();
+    return;
+  }
+  if (action === "advance-stage") return advanceClientStage(clientId);
+  if (action === "send-whatsapp") return sendWhatsapp(clientId);
+  if (action === "send-email") return sendEmail(clientId);
+  if (action === "add-tag") return promptAddTag(clientId);
+  if (action === "add-history") return addManualHistory(clientId);
+  if (action === "use-template") return useTemplate(clientId, templateId);
+}
+
+function getClient(clientId) {
+  return state.data.clients.find((client) => client.id === clientId) || null;
+}
+
+function advanceClientStage(clientId) {
+  const client = getClient(clientId);
+  if (!client) return;
+  const currentIndex = STAGES.findIndex((stage) => stage.id === client.stageId);
+  const nextStage = STAGES[currentIndex + 1];
+  if (!nextStage) {
+    window.alert("Esse cliente já está na última etapa do pipeline.");
+    return;
+  }
+
+  client.stageId = nextStage.id;
+  client.lastContactAt = new Date().toISOString();
+  client.nextContactAt = nextStage.id === "fechado" ? isoDateFromOffset(3) : isoDateFromOffset(2);
+  client.history.push(createHistoryEntry("stage", `Cliente movido para ${nextStage.name}.`));
+  applyAutomations(client);
+  renderApp();
+}
+
+function interpolateTemplate(templateBody, client) {
+  return templateBody
+    .replaceAll("{{nome}}", client.name)
+    .replaceAll("{{empresa}}", client.company);
+}
+
+function sendWhatsapp(clientId, template = MESSAGE_TEMPLATES[0]) {
+  const client = getClient(clientId);
+  if (!client) return;
+  const message = interpolateTemplate(template.body, client);
+  const url = `https://wa.me/${client.whatsapp}?text=${encodeURIComponent(message)}`;
+  client.lastContactAt = new Date().toISOString();
+  client.history.push(createHistoryEntry("whatsapp", `WhatsApp preparado com o template "${template.title}".`));
+  applyAutomations(client);
+  saveData();
+  window.open(url, "_blank", "noopener,noreferrer");
+  renderApp();
+}
+
+function sendEmail(clientId, template = MESSAGE_TEMPLATES[1]) {
+  const client = getClient(clientId);
+  if (!client) return;
+  const message = interpolateTemplate(template.body, client);
+  const subject = encodeURIComponent(`Contato Hub PJ | ${client.company}`);
+  const body = encodeURIComponent(`${message}\n\nAtenciosamente,\nEquipe Hub PJ`);
+  const url = `mailto:${client.email}?subject=${subject}&body=${body}`;
+  client.lastContactAt = new Date().toISOString();
+  client.history.push(createHistoryEntry("email", `E-mail preparado com o template "${template.title}".`));
+  applyAutomations(client);
+  saveData();
+  window.location.href = url;
+  renderApp();
+}
+
+function promptAddTag(clientId) {
+  const client = getClient(clientId);
+  if (!client) return;
+  const tag = window.prompt("Qual tag você quer adicionar a este cliente?");
+  if (!tag) return;
+  upsertTag(client, tag);
+  client.history.push(createHistoryEntry("tag", `Tag "${prettifyTag(normalizeTag(tag))}" adicionada manualmente.`));
+  saveData();
+  renderApp();
+}
+
+function addManualHistory(clientId) {
+  const client = getClient(clientId);
+  if (!client) return;
+  const note = window.prompt("Descreva rapidamente o contato realizado:");
+  if (!note) return;
+  client.lastContactAt = new Date().toISOString();
+  client.history.push(createHistoryEntry("manual", note));
+  saveData();
+  renderApp();
+}
+
+function useTemplate(clientId, templateId) {
+  const template = MESSAGE_TEMPLATES.find((item) => item.id === templateId);
+  if (!template) return;
+  if (template.channel === "WhatsApp") return sendWhatsapp(clientId, template);
+  return sendEmail(clientId, template);
+}
+
+function getHistoryLabel(type) {
+  return {
+    lead: "Lead registrado",
+    whatsapp: "Ação de WhatsApp",
+    email: "Ação de e-mail",
+    call: "Contato consultivo",
+    stage: "Mudança de etapa",
+    automation: "Automação executada",
+    tag: "Atualização de tag",
+    deal: "Registro de fechamento",
+    manual: "Anotação manual",
+  }[type] || "Atualização do CRM";
+}
+
+function escapeHtml(value = "") {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function openModal() {
+  clientModal.classList.add("is-open");
+  clientModal.setAttribute("aria-hidden", "false");
+  document.querySelector("#clientName")?.focus();
+}
+
+function closeModal() {
+  clientModal.classList.remove("is-open");
+  clientModal.setAttribute("aria-hidden", "true");
+  clientForm.reset();
+}
+
+function populateStageOptions() {
+  stageSelect.innerHTML = STAGES.map((stage, index) => `
+    <option value="${stage.id}" ${index === 0 ? "selected" : ""}>${stage.name}</option>
+  `).join("");
+}
+
+function handleClientSubmit(event) {
+  event.preventDefault();
+
+  const client = {
+    id: uid(),
+    name: document.querySelector("#clientName").value.trim(),
+    company: document.querySelector("#clientCompany").value.trim(),
+    whatsapp: document.querySelector("#clientWhatsapp").value.trim(),
+    email: document.querySelector("#clientEmail").value.trim(),
+    stageId: document.querySelector("#clientStage").value,
+    owner: "Equipe Hub PJ",
+    priority: "medium",
+    value: 2500,
+    tags: document
+      .querySelector("#clientTags")
+      .value
+      .split(",")
+      .map((tag) => prettifyTag(normalizeTag(tag)))
+      .filter(Boolean),
+    nextContactAt: isoDateFromOffset(1),
+    lastContactAt: new Date().toISOString(),
+    notes: document.querySelector("#clientNotes").value.trim() || "Cliente cadastrado manualmente no MVP.",
+    automations: [],
+    history: [createHistoryEntry("lead", "Cliente criado manualmente no CRM.")],
+  };
+
+  applyAutomations(client);
+  state.data.clients.unshift(client);
+  state.selectedClientId = client.id;
+  saveData();
+  closeModal();
+  renderApp();
+}
+
+function resetDemo() {
+  if (!window.confirm("Deseja restaurar os dados demonstrativos do CRM? Isso vai substituir a base salva no navegador.")) {
+    return;
+  }
+  state.data = seedData();
+  state.selectedClientId = state.data.clients[0]?.id || null;
+  state.filters = { search: "", stageId: "all", tag: "all", priority: "all" };
+  saveData();
+  renderApp();
+}
+
+addClientBtn.addEventListener("click", openModal);
+resetDemoBtn.addEventListener("click", resetDemo);
+closeModalBtn.addEventListener("click", closeModal);
+cancelModalBtn.addEventListener("click", closeModal);
+clientModal.addEventListener("click", (event) => {
+  if (event.target === clientModal) closeModal();
+});
+clientForm.addEventListener("submit", handleClientSubmit);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && clientModal.classList.contains("is-open")) closeModal();
+});
+
+populateStageOptions();
+applyAutomationsToAll();
+saveData();
+renderApp();
+
+</script>

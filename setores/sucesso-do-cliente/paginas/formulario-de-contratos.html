@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-base="../../..">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lp3.contratopj.com.br/contratops</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f7fbf8;
+      --bg-secondary:#eef8f1;
+      --surface:rgba(255,255,255,.86);
+      --surface-soft:rgba(255,255,255,.72);
+      --text:#173d34;
+      --muted:#6f8780;
+      --green:#13ab25;
+      --green-dark:#003d32;
+      --green-soft:#e8f7ec;
+      --green-mid:#b7e7c3;
+      --border:rgba(19,171,37,.16);
+      --border-strong:rgba(19,171,37,.24);
+      --input-bg:rgba(255,255,255,.96);
+      --input-border:rgba(19,171,37,.14);
+      --shadow:0 24px 60px rgba(0,61,50,.10);
+      --shadow-hover:0 28px 72px rgba(0,61,50,.14);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:18px;
+      --radius-sm:14px;
+      --max-width:1180px;
+    }
+
+    body.dark{
+      --bg:#08110d;
+      --bg-secondary:#0d1b15;
+      --surface:rgba(16,28,23,.88);
+      --surface-soft:rgba(18,33,27,.78);
+      --text:#ecf8f1;
+      --muted:#aac2b7;
+      --green:#1ed760;
+      --green-dark:#0b2e24;
+      --green-soft:#123024;
+      --green-mid:#245542;
+      --border:rgba(42,215,96,.18);
+      --border-strong:rgba(42,215,96,.28);
+      --input-bg:rgba(255,255,255,.05);
+      --input-border:rgba(255,255,255,.08);
+      --shadow:0 24px 60px rgba(0,0,0,.32);
+      --shadow-hover:0 28px 72px rgba(0,0,0,.38);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:'Manrope','Inter',sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(19,171,37,.10), transparent 32%),
+        radial-gradient(circle at 85% 12%, rgba(0,61,50,.10), transparent 24%),
+        linear-gradient(180deg,var(--bg-secondary) 0%,var(--bg) 100%);
+      color:var(--text);
+      min-height:100vh;
+      transition:background .25s ease,color .25s ease;
+    }
+
+    .page-shell{
+      position:relative;
+      min-height:100vh;
+      overflow:hidden;
+      padding:24px 18px 40px;
+    }
+
+    .ambient{
+      position:absolute;
+      width:340px;
+      height:340px;
+      border-radius:50%;
+      filter:blur(38px);
+      opacity:.34;
+      pointer-events:none;
+    }
+
+    .ambient-left{
+      top:60px;
+      left:-150px;
+      background:radial-gradient(circle, rgba(19,171,37,.28), transparent 68%);
+    }
+
+    .ambient-right{
+      top:260px;
+      right:-120px;
+      background:radial-gradient(circle, rgba(0,61,50,.24), transparent 70%);
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      width:min(100%,var(--max-width));
+      margin:0 auto;
+    }
+
+    .top-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:12px 16px;
+      border-radius:14px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      color:var(--text);
+      text-decoration:none;
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      font-weight:800;
+      box-shadow:var(--shadow);
+      transition:transform .18s ease, box-shadow .18s ease;
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+    }
+
+    .back-link:hover{
+      transform:translateY(-1px);
+      box-shadow:var(--shadow-hover);
+    }
+
+    .theme-toggle{
+      border:none;
+      background:linear-gradient(135deg,var(--green),var(--green-dark));
+      color:#fff;
+      padding:12px 16px;
+      border-radius:14px;
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 14px 28px rgba(0,61,50,.18);
+      transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    }
+
+    .theme-toggle:hover{
+      transform:translateY(-1px);
+      filter:saturate(1.05);
+      box-shadow:var(--shadow-hover);
+    }
+
+    .glass-panel{
+      background:
+        linear-gradient(135deg, var(--surface), var(--surface-soft)),
+        linear-gradient(135deg, rgba(19,171,37,.08), rgba(0,61,50,.08));
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:var(--shadow);
+    }
+
+    .selection-card{
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      border:1px solid rgba(255,255,255,.18);
+      background:
+        linear-gradient(135deg, var(--surface), var(--surface-soft)),
+        radial-gradient(circle at right bottom, rgba(19,171,37,.14), transparent 24%),
+        radial-gradient(circle at 82% 50%, rgba(0,61,50,.08), transparent 22%);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);
+    }
+
+    .selection-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,.12), transparent 46%, rgba(19,171,37,.06));
+      z-index:-1;
+    }
+
+    .selection-card::after{
+      content:"";
+      position:absolute;
+      inset:1px;
+      border-radius:inherit;
+      border:1px solid rgba(255,255,255,.08);
+      pointer-events:none;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.4fr .9fr;
+      gap:18px;
+      padding:30px;
+      border-radius:var(--radius-xl);
+      margin-bottom:22px;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      border-radius:999px;
+      color:var(--green);
+      background:rgba(19,171,37,.10);
+      border:1px solid rgba(19,171,37,.16);
+      font-size:.82rem;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    .hero-title{
+      margin:14px 0 10px;
+      font-size:clamp(2rem,3.6vw,3.1rem);
+      line-height:1.04;
+      color:var(--text);
+      max-width:13ch;
+    }
+
+    .hero-sub{
+      color:var(--muted);
+      line-height:1.75;
+      max-width:60ch;
+      font-size:14px;
+    }
+
+    .hero-side{
+      display:grid;
+      gap:14px;
+      align-content:start;
+    }
+
+    .meta-card{
+      border-radius:20px;
+      padding:20px;
+      min-height:108px;
+    }
+
+    .meta-card strong{
+      display:block;
+      font-size:1.08rem;
+      color:var(--text);
+      margin-bottom:6px;
+    }
+
+    .meta-card span{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .content-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+    }
+
+    .form-card{
+      border-radius:var(--radius-lg);
+      padding:22px;
+      box-shadow:var(--shadow);
+      background:var(--surface);
+      border:1px solid var(--border);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+    }
+
+    .card-title{
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      color:var(--green);
+      margin-bottom:16px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .card-title::before{
+      content:'';
+      display:inline-block;
+      width:3px;
+      height:14px;
+      background:linear-gradient(180deg,var(--green),var(--green-dark));
+      border-radius:2px;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+    }
+
+    .field,
+    fieldset.fieldset-card{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      width:100%;
+    }
+
+    label,
+    legend{
+      font-family:'Inter',sans-serif;
+      font-size:11px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+
+    input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1.5px solid var(--input-border);
+      background:var(--input-bg);
+      color:var(--text);
+      font-size:14px;
+      font-family:'Inter',sans-serif;
+      outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease, background .18s ease;
+    }
+
+    input:focus{
+      border-color:var(--green);
+      box-shadow:0 0 0 4px rgba(19,171,37,.10);
+    }
+
+    input::placeholder{
+      color:#94a49e;
+    }
+
+    fieldset{
+      border:none;
+      margin:0;
+      padding:0;
+    }
+
+    .fieldset-card{
+      background:linear-gradient(135deg, rgba(244,252,247,.92), rgba(255,255,255,.86));
+      border:1px solid rgba(19,171,37,.12);
+      border-radius:16px;
+      padding:14px 16px;
+    }
+
+    body.dark .fieldset-card{
+      background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-color:rgba(255,255,255,.08);
+    }
+
+    .radio-group{
+      display:grid;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .radio-option{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(19,171,37,.10);
+      font-family:'Inter',sans-serif;
+      font-size:14px;
+      color:var(--text);
+    }
+
+    body.dark .radio-option{
+      background:rgba(255,255,255,.04);
+      border-color:rgba(255,255,255,.08);
+    }
+
+    .radio-option input{
+      width:auto;
+      margin:0;
+      accent-color:var(--green);
+      cursor:pointer;
+      transform:translateY(-.5px);
+      box-shadow:none;
+    }
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    button{
+      margin-top:0;
+      padding:14px 22px;
+      background:linear-gradient(135deg,var(--green),var(--green-dark));
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      box-shadow:0 14px 28px rgba(0,61,50,.18);
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      filter:saturate(1.05);
+    }
+
+    .form-status{
+      color:var(--green);
+      font-family:'Inter',sans-serif;
+      font-size:13px;
+      font-weight:700;
+      min-height:18px;
+    }
+
+    @media(max-width:960px){
+      .hero{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media(max-width:600px){
+      .page-shell{
+        padding:14px 10px 28px;
+      }
+
+      .top-bar{
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      .hero,
+      .form-card{
+        padding:16px;
+      }
+
+      .hero-title{
+        max-width:100%;
+        font-size:30px;
+      }
+
+      .radio-option{
+        align-items:flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <style>.page-shell{opacity:0;transition:opacity .3s ease}.page-shell.ready{opacity:1}</style>
+  <script>
+    (function(){var b=document.documentElement.dataset.base||".";fetch(b+"/api/auth/check-session.php").then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(!d.logado){window.location.href=b+"/login.html";return}if(d.csrf_token)sessionStorage.setItem("csrf_token",d.csrf_token);var s=document.querySelector(".page-shell");if(s)s.classList.add("ready")}).catch(function(){window.location.href=(document.documentElement.dataset.base||".")+"/login.html"})})();
+  </script>
+  <div class="page-shell">
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+
+    <div class="wrap">
+      <div class="top-bar">
+        <a class="back-link" href="../">
+          <span aria-hidden="true">←</span>
+          <span>Voltar para a aba do sucesso do cliente</span>
+        </a>
+
+        <button type="button" class="theme-toggle" id="theme-toggle">🌙 Tema escuro</button>
+      </div>
+
+      <section class="hero glass-panel">
+        <div>
+          <span class="eyebrow">Contrato de Prestação de Serviços</span>
+          <h1 class="hero-title">Envie o contrato com os dados do cliente.</h1>
+          <p class="hero-sub">
+            Preencha as informações com atenção para que a automação gere o contrato corretamente.
+            Esta página foi reorganizada para seguir o mesmo padrão visual do projeto, mantendo
+            toda a lógica original do formulário.
+          </p>
+        </div>
+
+        <div class="hero-side">
+          <div class="meta-card selection-card">
+            <strong>Preenchimento guiado</strong>
+            <span>Campos organizados para facilitar a coleta dos dados principais do cliente e da empresa.</span>
+          </div>
+          <div class="meta-card selection-card">
+            <strong>Envio automatizado</strong>
+            <span>Ao concluir, os dados seguem para o webhook exatamente como no fluxo original.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <form id="automação-contrato">
+          <div class="form-card">
+            <div class="card-title">Formulário de Contrato</div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="name">Nome Completo do Cliente *</label>
+                <input type="text" id="name" name="name" required>
+              </div>
+
+              <div class="field">
+                <label for="email">Email do Cliente *</label>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+              </div>
+
+              <div class="field">
+                <label for="phone">Celular do Cliente *</label>
+                <input type="tel" id="phone" name="phone" placeholder="(11) 96123-4567" required>
+              </div>
+
+              <div class="field">
+                <label for="rg-ou-cnh">Documento do Cliente (Digite antes se é RG ou CNH) *</label>
+                <input type="text" id="rg-ou-cnh" name="rg-ou-cnh" placeholder="RG n° ou CNH" required>
+              </div>
+
+              <div class="field">
+                <label for="cpf">CPF do Cliente *</label>
+                <input type="text" id="cpf" name="cpf" inputmode="numeric" required>
+              </div>
+
+              <div class="field">
+                <label for="endereço-do-cliente">Endereço Completo do Cliente *</label>
+                <input type="text" id="endereço-do-cliente" name="endereço-do-cliente" placeholder="Rua Dom Jose de Barros, 51 - Sala 73, República, São Paulo/SP Complememento: Perto de um lugar CEP:036080320" required>
+              </div>
+
+              <div class="field">
+                <label for="cnpj">CNPJ do Cliente *</label>
+                <input type="text" id="cnpj" name="cnpj" inputmode="numeric" required>
+              </div>
+
+              <div class="field">
+                <label for="nome-empresa">Nome da Empresa do Cliente *</label>
+                <input type="text" id="nome-empresa" name="nome-empresa" required>
+              </div>
+
+              <div class="field">
+                <label for="endereço-da-empresa">Endereço Completo da Empresa *</label>
+                <input type="text" id="endereço-da-empresa" name="endereço-da-empresa" placeholder="Rua Dom Jose de Barros, 51 - Sala 73, República, São Paulo/SP Complememento: Perto de um lugar CEP:036080320" required>
+              </div>
+
+              <div class="field">
+                <label for="data-vencimento-mensalidade">Data de vencimento da mensalidade *</label>
+                <input type="date" id="data-vencimento-mensalidade" name="data-vencimento-mensalidade" required>
+              </div>
+
+              <fieldset class="fieldset-card">
+                <legend>Selecione o modelo de contrato que será enviado *</legend>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input class="radio" type="radio" name="modelo-de-contrato" value="mei" required>
+                    <span>MEI</span>
+                  </label>
+
+                  <label class="radio-option">
+                    <input class="radio" type="radio" name="modelo-de-contrato" value="Simples Nacional">
+                    <span>Simples Nacional</span>
+                  </label>
+
+                  <label class="radio-option">
+                    <input class="radio" type="radio" name="modelo-de-contrato" value="Lucro Presumido">
+                    <span>Lucro Presumido</span>
+                  </label>
+
+                  <label class="radio-option">
+                    <input class="radio" type="radio" name="modelo-de-contrato" value="Prestadores de Serviço SWAP">
+                    <span>Prestadores de Serviço SWAP</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset-card">
+                <legend>Selecione a empresa: *</legend>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input class="radio" type="radio" name="empresa" value="Contrato PJ Serviços" required>
+                    <span>Contrato PJ Serviços</span>
+                  </label>
+
+                  <label class="radio-option">
+                    <input class="radio" type="radio" name="empresa" value="Digitool">
+                    <span>Digitool</span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div class="field">
+                <label for="valor-contrato">Valor do Contrato (Mensal) - Em Reais</label>
+                <input type="text" id="valor-contrato" name="valor-contrato">
+              </div>
+
+              <div class="field">
+                <label for="escrever-valor">Escreva o Valor:</label>
+                <input type="text" id="escrever-valor" name="escrever-valor">
+              </div>
+
+              <div class="field">
+                <label for="notas-fiscais">Notas Fiscais</label>
+                <input type="text" id="notas-fiscais" name="notas-fiscais">
+              </div>
+
+              <div class="field">
+                <label for="qtd-funcionarios">Quantidade de Funcionários</label>
+                <input type="number" id="qtd-funcionarios" name="qtd-funcionarios">
+              </div>
+            </div>
+
+            <div class="actions">
+              <button>ENVIAR</button>
+              <p id="form-status" class="form-status"></p>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById("theme-toggle");
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark");
+      if (themeToggle) themeToggle.textContent = "☀️ Tema claro";
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        const isDark = document.body.classList.contains("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        themeToggle.textContent = isDark ? "☀️ Tema claro" : "🌙 Tema escuro";
+      });
+    }
+  </script>
+
+  <script>
+    // ===================== WEBHOOK + FORM =====================
+    const basePath = document.documentElement.dataset.base || ".";
+    const PROXY_URL = basePath + "/api/webhook-proxy.php";
+
+    const form = document.getElementById("automação-contrato");
+    const statusEl = document.getElementById("form-status");
+
+    if (!form) console.error('Form não encontrado. Adicione id="contabilidade-form" no <form>.');
+    if (!statusEl) console.error('Status não encontrado. Adicione <p id="form-status"></p> no HTML.');
+
+    // ===================== SUBMIT (RADIOS + PAYLOAD) =====================
+    if (form) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const modeloContrato = document.querySelector('input[name="modelo-de-contrato"]:checked')?.value || "";
+        const empresa = document.querySelector('input[name="empresa"]:checked')?.value || "";
+
+        const payload = {
+          name: document.getElementById("name")?.value.trim() || "",
+          email: document.getElementById("email")?.value.trim() || "",
+          phone: document.getElementById("phone")?.value.trim() || "",
+          rg_ou_cnh: document.getElementById("rg-ou-cnh")?.value.trim() || "",
+          cpf: document.getElementById("cpf")?.value.trim() || "",
+          endereco_do_cliente: document.getElementById("endereço-do-cliente")?.value.trim() || "",
+          cnpj: document.getElementById("cnpj")?.value.trim() || "",
+          nome_empresa: document.getElementById("nome-empresa")?.value.trim() || "",
+          endereco_da_empresa: document.getElementById("endereço-da-empresa")?.value.trim() || "",
+          data_vencimento_mensalidade: "(" + (document.getElementById("data-vencimento-mensalidade")?.value.split("-").pop() || "") + ")",
+          modelo_de_contrato: modeloContrato,
+          empresa: empresa,
+          notas_fiscais: "  " + document.getElementById("notas-fiscais")?.value.trim() || "",
+          valor_contrato: document.getElementById("valor-contrato")?.value.trim() || "",
+          escrever_valor: document.getElementById("escrever-valor")?.value.trim() || "",
+          qtd_funcionarios: "  " + document.getElementById("qtd-funcionarios")?.value.trim() || "",
+          submittedAt: new Date().toISOString(),
+        };
+
+        if (statusEl) statusEl.textContent = "Enviando...";
+
+        try {
+          const csrfToken = sessionStorage.getItem("csrf_token") || "";
+          const res = await fetch(PROXY_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const result = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            throw new Error(result.erro || "Erro ao enviar");
+          }
+
+          if (statusEl) statusEl.textContent = "Enviado com sucesso! ✅";
+          form.reset();
+        } catch (err) {
+          console.error(err);
+          if (statusEl) statusEl.textContent = "Falha ao enviar. ❌ Tente novamente em instantes.";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

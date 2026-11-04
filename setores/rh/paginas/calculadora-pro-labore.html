@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-base="../../..">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Pró-Labore | Hub PJ</title>
+  <link rel="icon" type="image/png" href="https://pjcontrato.com.br/wp-content/uploads/2026/01/cropped-PJ-Logo-Verde.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../../assets/css/hub.css" />
+  <link rel="stylesheet" href="../../../assets/css/components.css" />
+  <style>
+    :root {
+      --bg: #f7fbf8;
+      --bg-secondary: #ffffff;
+      --surface: rgba(255,255,255,.78);
+      --surface-strong: rgba(255,255,255,.9);
+      --text: #173d34;
+      --muted: #6f8780;
+      --green: #13ab25;
+      --green-dark: #003d32;
+      --green-soft: #e8f7ec;
+      --green-mid: #b7e7c3;
+      --border: rgba(19,171,37,.15);
+      --border-strong: rgba(19,171,37,.26);
+      --shadow: 0 24px 60px rgba(0,61,50,.1);
+      --shadow-hover: 0 28px 72px rgba(0,61,50,.16);
+      --amber: #d98208;
+      --red: #c0392b;
+      --blue: #1a6cb5;
+      --purple: #7b3fa0;
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --max-width: 1100px;
+      --nav-surface: rgba(255,255,255,.82);
+      --submenu-surface: rgba(255,255,255,.96);
+    }
+    body.dark {
+      --bg: #08110d; --bg-secondary: #0d1b15;
+      --surface: rgba(16,28,23,.88); --surface-strong: rgba(18,33,27,.94);
+      --text: #eef8f1; --muted: #a7beb4;
+      --green: #1ed760; --green-dark: #dff7e8;
+      --green-soft: rgba(30,215,96,.1); --green-mid: rgba(30,215,96,.22);
+      --border: rgba(255,255,255,.08); --border-strong: rgba(255,255,255,.14);
+      --shadow: 0 24px 60px rgba(0,0,0,.34); --shadow-hover: 0 28px 72px rgba(0,0,0,.42);
+      --amber: #ffb347; --red: #ff8f86; --blue: #7dc6ff; --purple: #d39cff;
+      --nav-surface: rgba(16,28,23,.88); --submenu-surface: rgba(14,24,20,.98);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: "Manrope","Segoe UI",Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(19,171,37,.08), transparent 32%),
+        radial-gradient(circle at 85% 12%, rgba(0,61,50,.08), transparent 24%),
+        linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg) 100%);
+      color: var(--text);
+      transition: background .25s ease, color .25s ease;
+    }
+    a, button, input, select { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    .page { opacity: 0; transition: opacity .3s ease; }
+    .page.ready { opacity: 1; }
+
+    /* ===== LAYOUT ===== */
+    .wrap {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+    .top { margin-bottom: 22px; }
+    .back {
+      display: inline-flex; padding: 12px 18px; border-radius: 16px;
+      background: var(--nav-surface); border: 1px solid rgba(19,171,37,.14);
+      box-shadow: var(--shadow); font-weight: 700; font-size: .85rem; color: var(--text);
+      transition: color .15s, box-shadow .15s;
+    }
+    .back:hover { color: var(--green); box-shadow: var(--shadow-hover); }
+
+    /* ===== HERO ===== */
+    .hero {
+      padding: 28px 36px;
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.78), rgba(255,255,255,.56)),
+        linear-gradient(135deg, rgba(19,171,37,.08), rgba(0,61,50,.08));
+      border: 1px solid rgba(255,255,255,.7);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+    body.dark .hero {
+      background:
+        linear-gradient(135deg, rgba(16,28,23,.9), rgba(18,33,27,.78)),
+        linear-gradient(135deg, rgba(30,215,96,.08), rgba(11,46,36,.18));
+      border-color: rgba(255,255,255,.08);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px;
+      color: var(--green-dark); background: rgba(19,171,37,.08);
+      border: 1px solid rgba(19,171,37,.12);
+      font-size: .84rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    body.dark .eyebrow { color: #b9f5c7; }
+    .hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.05; margin-bottom: 10px; }
+    .hero p  { color: var(--muted); line-height: 1.7; max-width: 60ch; }
+
+    /* ===== GRID PRINCIPAL ===== */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+    @media (max-width: 860px) { .main-grid { grid-template-columns: 1fr; } }
+
+    /* ===== PAINÉIS ===== */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+    .panel h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-icon {
+      display: grid;
+      place-items: center;
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: .95rem;
+      flex-shrink: 0;
+    }
+
+    /* ===== CAMPOS ===== */
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .field small { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+    .control {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--surface-strong);
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+      transition: border-color .15s, box-shadow .15s;
+      width: 100%;
+    }
+    .control:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(19,171,37,.15); }
+
+    /* ===== CARDS DE RESULTADO ===== */
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .result-card {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .result-card strong { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    .result-card span  { font-size: 1.35rem; font-weight: 800; color: var(--text); }
+    .result-card.highlight { border-color: var(--green); background: var(--green-soft); }
+    .result-card.highlight span { color: var(--green-dark); }
+    .result-card.danger span { color: var(--red); }
+    .result-card.warn span   { color: var(--amber); }
+
+    /* ===== BARRA DE INSS ===== */
+    .inss-bar-wrap { margin-bottom: 20px; }
+    .inss-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: .8rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+    .inss-bar-track {
+      height: 8px;
+      border-radius: 99px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .inss-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--green), #0a8f1c);
+      transition: width .4s ease;
+      max-width: 100%;
+    }
+    .inss-bar-fill.maxed { background: linear-gradient(90deg, var(--amber), #b56a00); }
+
+    /* ===== LISTA DE DETALHES ===== */
+    .detail-list { list-style: none; }
+    .detail-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem;
+    }
+    .detail-list li:last-child { border-bottom: none; }
+    .detail-list .dl-label { color: var(--muted); }
+    .detail-list .dl-value { font-weight: 800; }
+
+    /* ===== TABELA DE SIMULAÇÃO ===== */
+    .sim-table-wrap { overflow-x: auto; margin-top: 4px; }
+    .sim-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem;
+    }
+    .sim-table th {
+      text-align: left;
+      padding: 8px 10px;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+    .sim-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .sim-table tr.active-row td {
+      background: var(--green-soft);
+      font-weight: 800;
+      color: var(--green-dark);
+    }
+    .sim-table tr.active-row td:first-child {
+      border-left: 3px solid var(--green);
+    }
+    .sim-table .val-red  { color: var(--red); }
+    .sim-table .val-amber { color: var(--amber); }
+    .sim-table .val-green { color: var(--green); font-weight: 800; }
+
+    /* ===== NOTA ===== */
+    .note {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.65;
+      padding: 12px 14px;
+      background: var(--green-soft);
+      border-left: 3px solid var(--green);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+<body>
+<div class="page" id="pageShell">
+  <div id="nav-placeholder"></div>
+
+  <div class="wrap">
+    <div class="top">
+      <a class="back" href="../">← Voltar para o Setor Pessoal (RH)</a>
+    </div>
+
+    <header class="hero">
+      <span class="eyebrow">👥 Setor Pessoal (RH)</span>
+      <h1>Calculadora de Pró-Labore</h1>
+      <p>Calcule o INSS, IRRF e salário líquido do sócio com base no pró-labore bruto e número de dependentes, seguindo a tabela vigente de 2025/2026.</p>
+    </header>
+
+    <div class="main-grid">
+
+      <!-- COLUNA ESQUERDA: inputs + resultados principais -->
+      <div>
+        <div class="panel" style="margin-bottom: 18px;">
+          <h2><span class="panel-icon">✏️</span> Dados do pró-labore</h2>
+
+          <div class="field">
+            <label for="plGross">Pró-labore bruto (R$)</label>
+            <small>Valor mínimo legal: R$ 1.621,00 (salário mínimo 2026)</small>
+            <input id="plGross" class="control" type="number" min="1621" step="1" value="5000" />
+          </div>
+
+          <div class="field">
+            <label for="plDependents">Dependentes</label>
+            <small>Dedução de R$ 189,59 por dependente no IRRF</small>
+            <input id="plDependents" class="control" type="number" min="0" step="1" value="0" />
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2><span class="panel-icon">📊</span> Resultado</h2>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <strong>INSS / DARF</strong>
+              <span id="outInss">R$ 0,00</span>
+            </div>
+            <div class="result-card warn">
+              <strong>IRRF</strong>
+              <span id="outIrrf">R$ 0,00</span>
+            </div>
+            <div class="result-card danger">
+              <strong>Total de encargos</strong>
+              <span id="outTotal">R$ 0,00</span>
+            </div>
+            <div class="result-card highlight">
+              <strong>Salário líquido</strong>
+              <span id="outNet">R$ 0,00</span>
+            </div>
+          </div>
+
+          <!-- Barra de uso do teto do INSS -->
+          <div class="inss-bar-wrap">
+            <div class="inss-bar-label">
+              <span>Uso do teto INSS</span>
+              <span id="inssBarPct">0%</span>
+            </div>
+            <div class="inss-bar-track">
+              <div class="inss-bar-fill" id="inssBarFill" style="width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:4px;">
+              <span>R$ 0</span>
+              <span id="inssBarTeto">Teto: R$ 932,31</span>
+            </div>
+          </div>
+
+          <ul class="detail-list" id="detailList"></ul>
+
+          <div class="note">
+            <strong>Isenção de IRRF:</strong> pró-labore até R$ 5.000,00 é isento de IRRF, independente dos dependentes, conforme tabela progressiva vigente.
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUNA DIREITA: tabela de simulação -->
+      <div class="panel">
+        <h2><span class="panel-icon">🔢</span> Simulação por faixa de pró-labore</h2>
+        <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px;line-height:1.6;">
+          Comparativo automático entre diferentes valores de pró-labore. A linha destacada corresponde ao valor digitado.
+        </p>
+        <div class="sim-table-wrap">
+          <table class="sim-table">
+            <thead>
+              <tr>
+                <th>Pró-labore bruto</th>
+                <th>INSS</th>
+                <th>IRRF</th>
+                <th>Encargos</th>
+                <th>Líquido</th>
+                <th>Carga %</th>
+              </tr>
+            </thead>
+            <tbody id="simTableBody"></tbody>
+          </table>
+        </div>
+        <div class="note" style="margin-top:14px;">
+          <strong>INSS:</strong> 11% sobre o pró-labore, limitado ao teto de R$ 932,31 (teto 2026). &nbsp;
+          <strong>IRRF:</strong> tabela progressiva mensal — isento até R$ 5.000,00 bruto.
+        </div>
+      </div>
+
+    </div><!-- /main-grid -->
+  </div>
+
+  <div id="footer-placeholder"></div>
+</div>
+
+<script src="../../../assets/js/auth.js"></script>
+<script src="../../../assets/js/components.js"></script>
+<script src="../../../assets/js/nav.js"></script>
+<script src="../../../assets/js/utils.js"></script>
+<script>
+  // ============================================================
+  // Constantes 2026
+  // ============================================================
+  const INSS_TETO   = 932.31;   // teto mensal INSS 2026
+  const INSS_RATE   = 0.11;
+  const IRRF_ISENTO = 5000;     // pró-labore bruto isento de IRRF
+
+  // Valores de simulação exibidos na tabela
+  const SIM_VALUES = [1621, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 6000, 7000, 8000, 10000, 12000, 15000, 20000];
+
+  // ============================================================
+  // Formatadores
+  // ============================================================
+  const fmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+  const pct = new Intl.NumberFormat("pt-BR", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  function toCurrency(v) { return fmt.format(isFinite(v) ? v : 0); }
+  function toPercent(v)  { return pct.format(isFinite(v) ? v : 0); }
+  function round(v)      { return Math.round((v + Number.EPSILON) * 100) / 100; }
+  function toNum(v)      { return parseFloat(String(v).replace(",", ".")) || 0; }
+
+  // ============================================================
+  // Cálculos
+  // ============================================================
+  function calcInss(gross) {
+    return round(Math.min(gross * INSS_RATE, INSS_TETO));
+  }
+
+  function calcIrrf(gross, inss, dependents) {
+    if (gross <= IRRF_ISENTO) return 0;
+    const base = gross - inss;
+    let bruto = 0;
+    if      (base <= 2428.80) bruto = 0;
+    else if (base <= 2826.65) bruto = (base * 0.075)  - 182.16;
+    else if (base <= 3751.05) bruto = (base * 0.15)   - 394.16;
+    else if (base <= 4664.68) bruto = (base * 0.225)  - 675.49;
+    else                      bruto = (base * 0.275)  - 908.73;
+    const desconto = gross <= 7350 ? 978.62 - (0.133145 * gross) : 0;
+    return round(Math.max(0, bruto - desconto - (189.59 * dependents)));
+  }
+
+  function calcAll(gross, dependents) {
+    const inss  = calcInss(gross);
+    const irrf  = calcIrrf(gross, inss, dependents);
+    const total = round(inss + irrf);
+    const net   = round(gross - total);
+    const carga = gross > 0 ? total / gross : 0;
+    return { gross, inss, irrf, total, net, carga };
+  }
+
+  // ============================================================
+  // Render principal
+  // ============================================================
+  function render() {
+    const gross      = Math.max(0, toNum(document.getElementById("plGross").value));
+    const dependents = Math.max(0, Math.floor(toNum(document.getElementById("plDependents").value)));
+    const { inss, irrf, total, net, carga } = calcAll(gross, dependents);
+
+    // Cards
+    document.getElementById("outInss").textContent  = toCurrency(inss);
+    document.getElementById("outIrrf").textContent  = toCurrency(irrf);
+    document.getElementById("outTotal").textContent = toCurrency(total);
+    document.getElementById("outNet").textContent   = toCurrency(net);
+
+    // Barra INSS
+    const inssUsoPct = gross > 0 ? Math.min(inss / INSS_TETO, 1) : 0;
+    const fill       = document.getElementById("inssBarFill");
+    fill.style.width = (inssUsoPct * 100).toFixed(1) + "%";
+    fill.classList.toggle("maxed", inss >= INSS_TETO);
+    document.getElementById("inssBarPct").textContent = toPercent(inssUsoPct);
+
+    // Lista de detalhes
+    const list = document.getElementById("detailList");
+    const items = [
+      { l: "Pró-labore bruto",     v: toCurrency(gross),      cls: "" },
+      { l: "INSS (11%, teto 2026)",v: "− " + toCurrency(inss), cls: "" },
+      { l: "IRRF",                 v: "− " + toCurrency(irrf), cls: "" },
+      { l: "Total de encargos",    v: toCurrency(total),       cls: "dl-value" },
+      { l: "Salário líquido",      v: toCurrency(net),         cls: "dl-value" },
+      { l: "Carga total",          v: toPercent(carga),        cls: "" },
+      { l: "Dependentes",          v: String(dependents),      cls: "" },
+    ];
+    list.innerHTML = items.map(it =>
+      `<li><span class="dl-label">${it.l}</span><span class="dl-value">${it.v}</span></li>`
+    ).join("");
+
+    // Tabela de simulação
+    renderSimTable(gross, dependents);
+  }
+
+  // ============================================================
+  // Tabela de simulação
+  // ============================================================
+  function renderSimTable(currentGross, dependents) {
+    // Incluir o valor atual se não estiver nos predefinidos
+    const values = [...SIM_VALUES];
+    if (currentGross > 0 && !values.includes(currentGross)) {
+      values.push(currentGross);
+      values.sort((a, b) => a - b);
+    }
+
+    const rows = values.map(v => {
+      const r      = calcAll(v, dependents);
+      const active = Math.abs(v - currentGross) < 0.01;
+      const irrfCls = r.irrf > 0 ? "val-red" : "val-green";
+      const cargaCls = r.carga > 0.18 ? "val-red" : r.carga > 0.10 ? "val-amber" : "val-green";
+      return `<tr class="${active ? "active-row" : ""}">
+        <td>${toCurrency(v)}</td>
+        <td>${toCurrency(r.inss)}</td>
+        <td class="${irrfCls}">${toCurrency(r.irrf)}</td>
+        <td>${toCurrency(r.total)}</td>
+        <td>${toCurrency(r.net)}</td>
+        <td class="${cargaCls}">${toPercent(r.carga)}</td>
+      </tr>`;
+    });
+
+    document.getElementById("simTableBody").innerHTML = rows.join("");
+  }
+
+  // ============================================================
+  // Eventos
+  // ============================================================
+  ["plGross", "plDependents"].forEach(id => {
+    document.getElementById(id).addEventListener("input", render);
+  });
+
+  // Render inicial
+  render();
+</script>
+</body>
+</html>
