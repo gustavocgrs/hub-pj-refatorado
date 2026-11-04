@@ -10,3 +10,7 @@ api/webhook-proxy.php
 
 # Runtime
 tmp/ratelimit/*
+
+# Variaveis de ambiente
+.env
+.env.*
