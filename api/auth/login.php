@@ -12,12 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_response(['erro' => 'Metodo nao permitido'], 405);
 }
 
-// Rate limiting por IP — 5 tentativas a cada 5 minutos
-$ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-if (!rate_limit('login_' . $ip, 5, 300)) {
-    json_response(['erro' => 'Muitas tentativas. Aguarde 5 minutos.'], 429);
-}
-
 $input = json_decode(file_get_contents('php://input'), true);
 $email = is_string($input['email'] ?? null) ? trim($input['email']) : '';
 $senha = is_string($input['senha'] ?? null) ? $input['senha'] : '';
